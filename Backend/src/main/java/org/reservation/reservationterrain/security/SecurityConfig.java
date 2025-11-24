@@ -1,24 +1,42 @@
 package org.reservation.reservationterrain.security;
 
+import org.keycloak.admin.client.Keycloak;
+import org.keycloak.admin.client.KeycloakBuilder;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
-public class SecurityConfig {
+public class KeycloakAdminConfig {
+
+    @Value("${keycloak.server-url}")
+    private String serverUrl;
+
+    @Value("${keycloak.realm}")
+    private String realm;
+
+    @Value("${keycloak.username}")
+    private String username;
+
+    @Value("${keycloak.password}")
+    private String password;
+
+    @Value("${keycloak.client-id}")
+    private String clientId;
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/client/signup").permitAll()
-                        .anyRequest().authenticated()
-                )
-                .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
+    public Keycloak keycloakAdminClient() {
+        return KeycloakBuilder.builder()
+                .serverUrl(serverUrl)
+                .realm("master")       // admin user dans master
+                .clientId(clientId)    // admin-cli
+                .username(username)
+                .password(password)
+                .build();
+    }
 
-        return http.build();
+    @Bean
+    public String keycloakRealmName() {
+        return realm;                // ton realm applicatif
     }
 }

@@ -6,8 +6,8 @@ import lombok.Getter;
 @Setter
 public class ClientSignupRequest {
     private String email;
+    private String password;
     private String nom;
     private String prenom;
-    private String numTele = "";
-
+    private String numTele;
 }
