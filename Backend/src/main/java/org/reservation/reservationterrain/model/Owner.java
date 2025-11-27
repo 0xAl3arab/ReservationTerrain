@@ -9,6 +9,7 @@ import lombok.Setter;
 @Entity
 @Table(name = "owner")
 public class Owner extends User {
+    @Column(nullable= true,unique=true)
     private String nomComplexe;
 
 }

@@ -3,6 +3,7 @@ package org.reservation.reservationterrain.controller;
 import org.reservation.reservationterrain.dto.ClientSignupRequest;
 import org.reservation.reservationterrain.model.Client;
 import org.reservation.reservationterrain.service.ClientService;
+import org.reservation.reservationterrain.service.ClientSignupService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
@@ -11,21 +12,24 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/auth/client")
 public class AuthClientController {
 
+    private final ClientSignupService clientSignupService;
     private final ClientService clientService;
 
-    public AuthClientController(ClientService clientService) {
+    public AuthClientController(ClientSignupService clientSignupService,
+                                ClientService clientService) {
+        this.clientSignupService = clientSignupService;
         this.clientService = clientService;
     }
 
     @PostMapping("/signup")
     public Client signup(@RequestBody ClientSignupRequest request) {
-        return clientService.signup(request);
+        return clientSignupService.signup(request);
     }
 
-    // LOGIN côté backend : qui est connecté ?
-    @GetMapping("/me")
-    public Client me(@AuthenticationPrincipal Jwt jwt) {
-        String email = jwt.getClaimAsString("email");
+    @GetMapping("/login")
+    public Client login(@AuthenticationPrincipal Jwt jwt) {
+        System.out.println(jwt.getClaims()); // pour debug
+        String email = jwt.getClaimAsString("email"); // adapte si besoin
         return clientService.getByEmail(email);
     }
 }

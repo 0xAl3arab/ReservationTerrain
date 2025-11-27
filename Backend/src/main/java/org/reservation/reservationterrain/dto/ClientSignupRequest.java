@@ -1,6 +1,7 @@
 package org.reservation.reservationterrain.dto;
-import lombok.Setter;
+
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Setter

@@ -5,8 +5,6 @@ import org.reservation.reservationterrain.model.Client;
 import org.reservation.reservationterrain.repository.ClientRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 public class ClientService {
 
@@ -16,7 +14,8 @@ public class ClientService {
         this.clientRepository = clientRepository;
     }
 
-    public Client signup(ClientSignupRequest request) {
+    // tu peux encore l’utiliser si tu veux un signup sans Keycloak
+    public Client signupLocal(ClientSignupRequest request) {
         clientRepository.findByEmail(request.getEmail())
                 .ifPresent(c -> {
                     throw new RuntimeException("Email déjà utilisé");
@@ -36,5 +35,4 @@ public class ClientService {
         return clientRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Client non trouvé"));
     }
-
 }

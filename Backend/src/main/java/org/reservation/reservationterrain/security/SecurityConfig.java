@@ -1,42 +1,46 @@
 package org.reservation.reservationterrain.security;
 
-import org.keycloak.admin.client.Keycloak;
-import org.keycloak.admin.client.KeycloakBuilder;
-import org.springframework.beans.factory.annotation.Value;
+import org.reservation.reservationterrain.security.KeycloakRealmRoleConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
-public class KeycloakAdminConfig {
-
-    @Value("${keycloak.server-url}")
-    private String serverUrl;
-
-    @Value("${keycloak.realm}")
-    private String realm;
-
-    @Value("${keycloak.username}")
-    private String username;
-
-    @Value("${keycloak.password}")
-    private String password;
-
-    @Value("${keycloak.client-id}")
-    private String clientId;
+@EnableMethodSecurity // pour @PreAuthorize si besoin
+public class SecurityConfig {
 
     @Bean
-    public Keycloak keycloakAdminClient() {
-        return KeycloakBuilder.builder()
-                .serverUrl(serverUrl)
-                .realm("master")       // admin user dans master
-                .clientId(clientId)    // admin-cli
-                .username(username)
-                .password(password)
-                .build();
+    public JwtAuthenticationConverter jwtAuthenticationConverter() {
+        JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
+        converter.setJwtGrantedAuthoritiesConverter(new KeycloakRealmRoleConverter());
+        return converter;
     }
 
     @Bean
-    public String keycloakRealmName() {
-        return realm;                // ton realm applicatif
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
+        http
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth
+                        // Auth public
+                        .requestMatchers("/auth/client/**").permitAll()
+                        .requestMatchers("/api/complexes/**").permitAll()   // <-- AJOUT ICI
+                        .requestMatchers("/error").permitAll()
+                        // Endpoints protégés par rôle
+                        .requestMatchers("/client/**").hasRole("CLIENT")
+                        .requestMatchers("/owner/**").hasRole("OWNER")
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        // tout le reste nécessite juste un token valide
+                        .anyRequest().authenticated()
+                )
+                .oauth2ResourceServer(oauth2 -> oauth2
+                        .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
+                );
+
+        return http.build();
     }
+
 }

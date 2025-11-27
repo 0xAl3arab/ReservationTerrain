@@ -1,0 +1,49 @@
+package org.reservation.reservationterrain.security;
+
+import org.keycloak.OAuth2Constants;
+import org.keycloak.admin.client.Keycloak;
+import org.keycloak.admin.client.KeycloakBuilder;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class KeycloakConfig {
+
+    @Value("${keycloak.server-url}")
+    private String serverUrl;
+
+    // realm applicatif où tu crées les users (reservation-realm)
+    @Value("${keycloak.realm}")
+    private String appRealm;
+
+    // realm admin (master)
+    @Value("${keycloak.admin-realm}")
+    private String adminRealm;
+
+    @Value("${keycloak.client-id}")
+    private String clientId;
+
+    @Value("${keycloak.username}")
+    private String username;
+
+    @Value("${keycloak.password}")
+    private String password;
+
+    @Bean
+    public Keycloak keycloak() {
+        return KeycloakBuilder.builder()
+                .serverUrl(serverUrl)
+                .realm(adminRealm)              // master
+                .clientId(clientId)             // admin-cli
+                .username(username)             // admin
+                .password(password)
+                .grantType(OAuth2Constants.PASSWORD)
+                .build();
+    }
+
+    @Bean
+    public String keycloakRealmName() {
+        return appRealm;                       // reservation-realm
+    }
+}
