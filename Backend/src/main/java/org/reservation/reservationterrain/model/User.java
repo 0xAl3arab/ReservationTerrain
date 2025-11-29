@@ -1,27 +1,36 @@
 package org.reservation.reservationterrain.model;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-@MappedSuperclass
-public abstract  class User{
+@MappedSuperclass // Les champs ici seront copiés dans la table 'owner'
+public abstract class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(unique = true,nullable = false)
-    String email;
+
+    // C'EST CE CHAMP QUI MANQUAIT !
+    @Column(unique = true, name = "keycloak_id")
+    private String keycloakId;
+
+    @Column(unique = true, nullable = false)
+    private String email;
+
     @Column(nullable = false)
     private String nom;
+
     private String prenom;
-    private String role ;
-    @Column(unique = true, nullable = true)
+
+    // Utile pour savoir si c'est un ADMIN ou OWNER sans demander à Keycloak
+    private String role;
+
+    @Column(unique = true)
     private String numTele;
 
-
-    public User(){}
-
-
-
+    public User() {
+    }
 }
