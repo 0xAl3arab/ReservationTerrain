@@ -33,4 +33,9 @@ public class TerrainController {
     public void supprimer(@PathVariable Long id) {
         terrainService.supprimerTerrain(id);
     }
+
+    @PutMapping("/{id}")
+    public Terrain modifier(@PathVariable Long id, @RequestBody Terrain terrain, @AuthenticationPrincipal Jwt jwt) {
+        return terrainService.modifierTerrain(id, terrain, jwt);
+    }
 }

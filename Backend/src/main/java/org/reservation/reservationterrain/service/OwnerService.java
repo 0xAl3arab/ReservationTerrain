@@ -23,7 +23,7 @@ public class OwnerService {
     public Owner getCurrentOwner(Jwt jwt) {
         // 1. On récupère l'ID unique de Keycloak (le "sub")
         String keycloakId = jwt.getSubject();
-        
+
         // 2. On récupère les infos du Token (Email, Nom, Prénom)
         String email = jwt.getClaimAsString("email");
         String nom = jwt.getClaimAsString("family_name");
@@ -34,17 +34,14 @@ public class OwnerService {
                 .orElseGet(() -> {
                     // 4. S'il n'existe pas, on le CRÉE (Inscription automatique)
                     Owner newOwner = new Owner();
-                    
+
                     // Partie commune (User)
                     newOwner.setKeycloakId(keycloakId);
                     newOwner.setEmail(email);
                     newOwner.setNom(nom != null ? nom : "Propriétaire");
                     newOwner.setPrenom(prenom != null ? prenom : "");
                     newOwner.setRole("OWNER"); // On force le rôle
-                    
-                    // Partie spécifique (Owner)
-                    // newOwner.setNomComplexe("À définir"); 
-                    
+
                     return ownerRepository.save(newOwner);
                 });
     }
@@ -60,7 +57,7 @@ public class OwnerService {
         if (infosAjour.getNumTele() != null) {
             currentOwner.setNumTele(infosAjour.getNumTele());
         }
-        
+
         if (infosAjour.getNomComplexe() != null) {
             currentOwner.setNomComplexe(infosAjour.getNomComplexe());
         }
@@ -71,6 +68,11 @@ public class OwnerService {
 
         if (infosAjour.getPrenom() != null) {
             currentOwner.setPrenom(infosAjour.getPrenom());
+        }
+
+        // --- NOUVEAU : Mise à jour de la photo ---
+        if (infosAjour.getPhotoProfil() != null) {
+            currentOwner.setPhotoProfil(infosAjour.getPhotoProfil());
         }
 
         return ownerRepository.save(currentOwner);

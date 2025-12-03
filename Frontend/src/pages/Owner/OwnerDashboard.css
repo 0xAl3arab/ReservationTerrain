@@ -1,89 +1,49 @@
-/* OwnerDashboard.css */
+/* --- RESET GLOBAL (Pour corriger le fond coupé) --- */
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #f4f6f8; /* Gris clair partout */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  box-sizing: border-box;
+}
 
-/* Variables de couleurs (Vert Sport & Dark) */
+/* Variables de couleurs */
 :root {
-  --primary-color: #2ecc71; /* Un beau vert terrain */
+  --primary-color: #2ecc71;
   --primary-hover: #27ae60;
-  --dark-bg: #1a1a1a;
+  --dark-bg: #2c3e50;
   --card-bg: #ffffff;
   --text-dark: #333;
-  --text-light: #f5f5f5;
-  --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-/* --- 1. ÉCRAN DE LOGIN (Non connecté) --- */
-.owner-login-container {
-  height: 100vh;
-  width: 100vw;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: linear-gradient(135deg, #1a1a1a 0%, #2c3e50 100%);
-  color: white;
-}
-
-.login-card {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px); /* Effet verre */
-  padding: 3rem;
-  border-radius: 15px;
-  text-align: center;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-  max-width: 400px;
-  width: 100%;
-}
-
-.login-card h2 {
-  margin-bottom: 1rem;
-  font-size: 2rem;
-}
-
-.login-card p {
-  margin-bottom: 2rem;
-  color: #ddd;
-}
-
-.btn-primary {
-  background-color: var(--primary-color);
-  color: white;
-  border: none;
-  padding: 12px 24px;
-  font-size: 1.1rem;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-weight: bold;
-  width: 100%;
-}
-
-.btn-primary:hover {
-  background-color: var(--primary-hover);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(46, 204, 113, 0.4);
-}
-
-/* --- 2. TABLEAU DE BORD (Connecté) --- */
+/* --- CONTENEUR PRINCIPAL --- */
 .dashboard-container {
   min-height: 100vh;
-  background-color: #f4f6f8; /* Gris très clair */
-  color: var(--text-dark);
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
-/* Navbar */
+/* --- HEADER / NAVBAR --- */
 .dashboard-header {
   background-color: white;
   padding: 1rem 2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: var(--shadow);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  position: sticky; /* Le menu reste en haut quand on scroll */
+  top: 0;
+  z-index: 100;
 }
 
 .dashboard-header h1 {
   color: var(--dark-bg);
   font-size: 1.5rem;
+  margin: 0;
 }
 
 .btn-logout {
@@ -101,60 +61,40 @@
   background-color: #c0392b;
 }
 
-/* Contenu Principal */
+/* --- GRILLE DE CONTENU (Profil + Formulaire) --- */
 .dashboard-content {
-  max-width: 1200px;
-  margin: 2rem auto;
-  padding: 0 1rem;
+  width: 100%;
+  max-width: 1200px; /* Empêche le site d'être trop large sur grand écran */
+  margin: 2rem auto; /* Centre le tout horizontalement */
+  padding: 0 20px;
+  box-sizing: border-box;
+  
   display: grid;
-  grid-template-columns: 1fr 2fr; /* Colonne gauche petite, droite grande */
+  grid-template-columns: 350px 1fr; /* Gauche fixe, Droite prend le reste */
   gap: 2rem;
+  align-items: start;
 }
 
-/* Cartes */
+/* --- CARTES --- */
 .card {
   background: var(--card-bg);
   padding: 2rem;
   border-radius: 12px;
   box-shadow: var(--shadow);
+  border: 1px solid #eee;
 }
 
-.profile-header {
-  text-align: center;
-  margin-bottom: 1rem;
-}
-
-.avatar {
-  width: 80px;
-  height: 80px;
-  background-color: var(--primary-color);
-  color: white;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2rem;
-  margin: 0 auto 1rem auto;
-}
-
-.info-item {
-  margin-bottom: 0.8rem;
-  font-size: 0.95rem;
-  color: #555;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 5px;
-}
-
-/* Formulaire */
+/* --- INPUTS & FORMULAIRES (Correction couleur) --- */
 .form-group {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.2rem;
 }
 
 .form-group label {
   display: block;
   margin-bottom: 0.5rem;
   font-weight: 600;
-  color: #333;
+  color: #444;
+  font-size: 0.9rem;
 }
 
 .form-input {
@@ -164,13 +104,42 @@
   border-radius: 8px;
   font-size: 1rem;
   transition: 0.3s;
-  box-sizing: border-box; /* Important pour ne pas dépasser */
+  box-sizing: border-box;
+  
+  /* FORCE LE BLANC ET LE TEXTE NOIR */
+  background-color: #ffffff !important; 
+  color: #333333 !important;
 }
 
 .form-input:focus {
   border-color: var(--primary-color);
   outline: none;
   box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.2);
+}
+
+.form-row {
+  display: flex;
+  gap: 15px;
+}
+
+/* --- BOUTONS --- */
+.btn-primary {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  font-size: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: bold;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-2px);
 }
 
 .success-message {
@@ -180,47 +149,91 @@
   border-radius: 6px;
   margin-top: 15px;
   text-align: center;
+  font-weight: bold;
 }
-/* --- 3. SECTION TERRAINS --- */
+
+/* --- PROFIL HEADER --- */
+.profile-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.avatar {
+  width: 90px;
+  height: 90px;
+  background-color: var(--primary-color);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  margin: 0 auto 1rem auto;
+  border: 4px solid #fff;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+/* --- SECTION TERRAINS --- */
 .terrain-section {
-  grid-column: 1 / -1; /* Prend toute la largeur */
+  grid-column: 1 / -1; /* Prend toute la largeur en bas */
   margin-top: 2rem;
+  padding-bottom: 3rem;
 }
 
 .terrain-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 1.5rem;
-  margin-top: 1.5rem;
 }
 
 .terrain-card {
   background: white;
-  border: 1px solid #eee;
   border-radius: 10px;
-  padding: 1.5rem;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  padding: 1rem;
+  box-shadow: var(--shadow);
   transition: transform 0.2s;
-  position: relative;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #eee;
 }
 
 .terrain-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 8px 15px rgba(0,0,0,0.1);
   border-color: var(--primary-color);
+}
+
+.terrain-img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  border: 1px solid #eee;
+}
+
+.no-image {
+  width: 100%;
+  height: 180px;
+  background-color: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #888;
+  border-radius: 8px;
+  margin-bottom: 12px;
 }
 
 .terrain-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
 }
 
 .terrain-header h4 {
   margin: 0;
-  color: #333;
   font-size: 1.2rem;
+  color: #333;
 }
 
 .badge-type {
@@ -228,14 +241,14 @@
   color: white;
   padding: 4px 8px;
   border-radius: 4px;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: bold;
 }
 
 .terrain-price {
-  font-size: 1.1rem;
   color: var(--primary-color);
   font-weight: bold;
+  font-size: 1.2rem;
   margin: 10px 0;
 }
 
@@ -243,49 +256,51 @@
   background-color: #ff4d4d;
   color: white;
   border: none;
-  padding: 5px 10px;
-  border-radius: 4px;
+  padding: 8px;
+  border-radius: 6px;
   cursor: pointer;
-  font-size: 0.8rem;
-  margin-top: 10px;
   width: 100%;
+  margin-top: auto;
+  font-weight: 600;
 }
 
-.btn-delete:hover {
-  background-color: #cc0000;
-}
-
-/* Formulaire d'ajout dans une carte */
-.add-terrain-wrapper {
-  background: #fff;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: var(--shadow);
-  margin-bottom: 20px;
-}
-
-.form-row {
+/* --- PAGE LOGIN --- */
+.owner-login-container {
+  height: 100vh;
+  width: 100vw;
   display: flex;
-  gap: 15px;
-}
-/* Image du terrain */
-.terrain-img {
-  width: 100%;
-  height: 180px; /* Hauteur fixe pour aligner les cartes */
-  object-fit: cover; /* L'image remplit la zone sans être écrasée */
-  border-radius: 8px;
-  margin-bottom: 10px;
-  background-color: #eee;
-}
-
-/* Petit ajustement si pas d'image */
-.no-image {
-  height: 180px;
-  display: flex;
-  align-items: center;
   justify-content: center;
-  background-color: #e0e0e0;
-  color: #888;
-  border-radius: 8px;
-  margin-bottom: 10px;
+  align-items: center;
+  background: linear-gradient(135deg, #2c3e50 0%, #000000 100%);
+  color: white;
+}
+
+.login-card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  padding: 3rem;
+  border-radius: 15px;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  width: 100%;
+  max-width: 400px;
+}
+
+/* --- RESPONSIVE MOBILE --- */
+@media (max-width: 768px) {
+  .dashboard-content {
+    grid-template-columns: 1fr; /* Une seule colonne sur mobile */
+  }
+}
+/* Ajouter à la fin de OwnerDashboard.css */
+
+.avatar-img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%; /* Rend l'image ronde */
+  object-fit: cover;  /* L'image ne sera pas déformée */
+  border: 4px solid white;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  margin: 0 auto 1rem auto;
+  display: block;
 }

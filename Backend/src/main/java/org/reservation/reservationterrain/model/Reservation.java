@@ -1,6 +1,6 @@
 package org.reservation.reservationterrain.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,18 +16,22 @@ public class Reservation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private LocalDateTime dateHeureDebut; // Ex: 2024-11-30 14:00
-    private LocalDateTime dateHeureFin;   // Ex: 2024-11-30 15:00
-    
-    private String statut; // "EN_ATTENTE", "CONFIRMEE", "ANNULEE"
+    // Format de date : "2024-11-30 14:00"
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    private LocalDateTime dateHeureDebut;
 
-    // RELATIONS
-    
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    private LocalDateTime dateHeureFin;
+
+    private String statut; // "CONFIRMEE", "ANNULEE", "EN_ATTENTE"
+
+    // RELATION : Une réservation concerne UN terrain
     @ManyToOne
     @JoinColumn(name = "terrain_id")
     private Terrain terrain;
 
+    // RELATION : Une réservation est faite par UN client
     @ManyToOne
     @JoinColumn(name = "client_id")
-    private Client client; // Ton collègue devra avoir créé la classe Client !
+    private Client client;
 }

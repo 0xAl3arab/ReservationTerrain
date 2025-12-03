@@ -18,4 +18,6 @@ public class Owner extends User {
     // private String iban;
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
     private List<Terrain> terrains;
+    @Column(columnDefinition = "TEXT")
+    private String photoProfil; // Lien vers l'image
 }

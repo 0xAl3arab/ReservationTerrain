@@ -35,4 +35,29 @@ public class TerrainService {
     public void supprimerTerrain(Long id) {
         terrainRepository.deleteById(id);
     }
+
+    // Mettre à jour un terrain existant
+    public Terrain modifierTerrain(Long id, Terrain nouvellesInfos, Jwt jwt) {
+        // 1. On récupère le propriétaire connecté
+        Owner ownerConnecte = ownerService.getCurrentOwner(jwt);
+
+        // 2. On cherche le terrain en base
+        Terrain terrainExistant = terrainRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Terrain introuvable"));
+
+        // 3. SÉCURITÉ : On vérifie que ce terrain appartient bien à cet owner
+        if (!terrainExistant.getOwner().getId().equals(ownerConnecte.getId())) {
+            throw new RuntimeException("Vous n'avez pas le droit de modifier ce terrain !");
+        }
+
+        // 4. On met à jour les champs
+        terrainExistant.setNom(nouvellesInfos.getNom());
+        terrainExistant.setType(nouvellesInfos.getType());
+        terrainExistant.setPrixHeure(nouvellesInfos.getPrixHeure());
+        terrainExistant.setAdresse(nouvellesInfos.getAdresse());
+        terrainExistant.setPhotoUrl(nouvellesInfos.getPhotoUrl());
+
+        // 5. On sauvegarde
+        return terrainRepository.save(terrainExistant);
+    }
 }
