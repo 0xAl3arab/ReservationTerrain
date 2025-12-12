@@ -1,7 +1,10 @@
 package org.reservation.reservationterrain.controller;
 
+import org.reservation.reservationterrain.dto.ClientLoginRequest;
 import org.reservation.reservationterrain.dto.ClientSignupRequest;
+import org.reservation.reservationterrain.dto.TokenResponse;
 import org.reservation.reservationterrain.model.Client;
+import org.reservation.reservationterrain.service.ClientLoginService;
 import org.reservation.reservationterrain.service.ClientService;
 import org.reservation.reservationterrain.service.ClientSignupService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -14,11 +17,14 @@ public class AuthClientController {
 
     private final ClientSignupService clientSignupService;
     private final ClientService clientService;
+    private final ClientLoginService clientLoginService;
 
     public AuthClientController(ClientSignupService clientSignupService,
-                                ClientService clientService) {
+                                ClientService clientService,
+                                ClientLoginService clientLoginService) {
         this.clientSignupService = clientSignupService;
         this.clientService = clientService;
+        this.clientLoginService = clientLoginService;
     }
 
     @PostMapping("/signup")
@@ -26,10 +32,14 @@ public class AuthClientController {
         return clientSignupService.signup(request);
     }
 
-    @GetMapping("/login")
-    public Client login(@AuthenticationPrincipal Jwt jwt) {
-        System.out.println(jwt.getClaims()); // pour debug
-        String email = jwt.getClaimAsString("email"); // adapte si besoin
+    @PostMapping("/login")
+    public TokenResponse login(@RequestBody ClientLoginRequest request) {
+        return clientLoginService.login(request);
+    }
+
+    @GetMapping("/me")
+    public Client getCurrentUser(@AuthenticationPrincipal Jwt jwt) {
+        String email = jwt.getClaimAsString("email");
         return clientService.getByEmail(email);
     }
 }

@@ -17,7 +17,6 @@ public class ClientService {
         this.clientRepository = clientRepository;
     }
 
-    // tu peux encore l’utiliser si tu veux un signup sans Keycloak
     public Client signupLocal(ClientSignupRequest request) {
         clientRepository.findByEmail(request.getEmail())
                 .ifPresent(c -> {
@@ -39,23 +38,46 @@ public class ClientService {
                 .orElseThrow(() -> new RuntimeException("Client non trouvé"));
     }
 
+    // Récupère le profil à partir du JWT
+    public ClientResponseDTO getCurrentClientProfile(Jwt jwt) {
+        String email = jwt.getClaimAsString("email");
+        Client client = getOrCreateFromJwt(jwt, email);
+        return toResponseDTO(client);
+    }
+
+    // Mise à jour du profil (sans changer l'email)
     public ClientResponseDTO updateProfile(Jwt jwt, ClientProfileUpdateRequest request) {
         String email = jwt.getClaimAsString("email");
-        Client client = getByEmail(email);
+        Client client = getOrCreateFromJwt(jwt, email);
 
         if (request.getNom() != null) client.setNom(request.getNom());
         if (request.getPrenom() != null) client.setPrenom(request.getPrenom());
         if (request.getNumTele() != null) client.setNumTele(request.getNumTele());
 
         Client saved = clientRepository.save(client);
+        return toResponseDTO(saved);
+    }
 
+    // Si besoin, crée le client en DB à partir des claims Keycloak
+    private Client getOrCreateFromJwt(Jwt jwt, String email) {
+        return clientRepository.findByEmail(email).orElseGet(() -> {
+            Client c = new Client();
+            c.setEmail(email);
+            c.setNom(jwt.getClaimAsString("family_name"));
+            c.setPrenom(jwt.getClaimAsString("given_name"));
+            c.setKeycloakId(jwt.getSubject());
+            c.setRole("CLIENT");
+            return clientRepository.save(c);
+        });
+    }
+
+    private ClientResponseDTO toResponseDTO(Client client) {
         ClientResponseDTO response = new ClientResponseDTO();
-        response.setId(saved.getId());
-        response.setNom(saved.getNom());
-        response.setPrenom(saved.getPrenom());
-        response.setEmail(saved.getEmail());
-        response.setNumTele(saved.getNumTele());
-
+        response.setId(client.getId());
+        response.setNom(client.getNom());
+        response.setPrenom(client.getPrenom());
+        response.setEmail(client.getEmail());
+        response.setNumTele(client.getNumTele());
         return response;
     }
 }

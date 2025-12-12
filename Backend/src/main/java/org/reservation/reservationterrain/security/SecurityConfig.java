@@ -1,15 +1,15 @@
 package org.reservation.reservationterrain.security;
 
-import org.reservation.reservationterrain.security.KeycloakRealmRoleConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
-@EnableMethodSecurity // pour @PreAuthorize si besoin
+@EnableMethodSecurity
 public class SecurityConfig {
 
     @Bean
@@ -24,16 +24,22 @@ public class SecurityConfig {
 
         http
                 .csrf(csrf -> csrf.disable())
+                .cors(cors -> {})   // *** enable CORS with WebConfig ***
                 .authorizeHttpRequests(auth -> auth
-                        // Auth public
+                        // Always allow CORS preflight
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
+                        // Public auth + public APIs
                         .requestMatchers("/auth/client/**").permitAll()
-                        .requestMatchers("/api/complexes/**").permitAll()   // <-- AJOUT ICI
+                        .requestMatchers("/api/complexes/**").permitAll()
                         .requestMatchers("/error").permitAll()
-                        // Endpoints protégés par rôle
+
+                        // Protected by role
                         .requestMatchers("/client/**").hasRole("CLIENT")
                         .requestMatchers("/owner/**").hasRole("OWNER")
                         .requestMatchers("/admin/**").hasRole("ADMIN")
-                        // tout le reste nécessite juste un token valide
+
+                        // Any other endpoint needs a valid token
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
@@ -42,5 +48,4 @@ public class SecurityConfig {
 
         return http.build();
     }
-
 }
