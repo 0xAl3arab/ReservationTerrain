@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import keycloak from "../../keycloak"; // adapter le chemin
 
@@ -10,6 +11,12 @@ function ClientLoginPage() {
             // 1. Login via Keycloak
             await keycloak.init({ onLoad: "login-required" });
             console.log("Token Keycloak:", keycloak.token);
+
+            // Save tokens for other pages
+            if (keycloak.token) {
+                localStorage.setItem("kc_access_token", keycloak.token);
+                localStorage.setItem("kc_refresh_token", keycloak.refreshToken);
+            }
 
             // 2. Appel du backend avec le token
             const res = await fetch("http://localhost:8080/auth/client/login", {
@@ -27,6 +34,13 @@ function ClientLoginPage() {
             const data = await res.json();
             setClientInfo(data);
             setError(null);
+
+            // Redirect to home
+            // Note: We need to use window.location or navigate. Since this is inside a function, 
+            // and we might not have navigate hook setup in this specific file version (it uses basic function),
+            // let's check if we can add useNavigate.
+            // The file imports { useState } from "react". I should add useNavigate.
+            window.location.href = "/";
         } catch (e) {
             console.error("Login error:", e);
             setError(e.message);
