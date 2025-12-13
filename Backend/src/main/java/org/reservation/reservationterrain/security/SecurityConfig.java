@@ -35,6 +35,7 @@ public class SecurityConfig {
                         .requestMatchers("/error").permitAll()
 
                         // Protected by role
+                        .requestMatchers("/client/profile", "/client/password").authenticated() // Allow profile access to all logged in users (fixes legacy account issues)
                         .requestMatchers("/client/**").hasRole("CLIENT")
                         .requestMatchers("/owner/**").hasRole("OWNER")
                         .requestMatchers("/admin/**").hasRole("ADMIN")

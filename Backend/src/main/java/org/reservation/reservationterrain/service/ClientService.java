@@ -1,10 +1,14 @@
 package org.reservation.reservationterrain.service;
 
+import org.keycloak.admin.client.Keycloak;
+import org.keycloak.admin.client.resource.UserResource;
+import org.keycloak.representations.idm.UserRepresentation;
 import org.reservation.reservationterrain.dto.ClientProfileUpdateRequest;
 import org.reservation.reservationterrain.dto.ClientResponseDTO;
 import org.reservation.reservationterrain.dto.ClientSignupRequest;
 import org.reservation.reservationterrain.model.Client;
 import org.reservation.reservationterrain.repository.ClientRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
@@ -12,9 +16,15 @@ import org.springframework.stereotype.Service;
 public class ClientService {
 
     private final ClientRepository clientRepository;
+    private final Keycloak keycloak;
+    private final String realm;
 
-    public ClientService(ClientRepository clientRepository) {
+    public ClientService(ClientRepository clientRepository,
+                         Keycloak keycloak,
+                         @Value("${keycloak.realm}") String realm) {
         this.clientRepository = clientRepository;
+        this.keycloak = keycloak;
+        this.realm = realm;
     }
 
     public Client signupLocal(ClientSignupRequest request) {
@@ -45,30 +55,60 @@ public class ClientService {
         return toResponseDTO(client);
     }
 
-    // Mise à jour du profil (sans changer l'email)
+    // Mise à jour du profil avec synchronisation Keycloak
     public ClientResponseDTO updateProfile(Jwt jwt, ClientProfileUpdateRequest request) {
         String email = jwt.getClaimAsString("email");
         Client client = getOrCreateFromJwt(jwt, email);
 
+        // Update database
         if (request.getNom() != null) client.setNom(request.getNom());
         if (request.getPrenom() != null) client.setPrenom(request.getPrenom());
         if (request.getNumTele() != null) client.setNumTele(request.getNumTele());
+        if (request.getEmail() != null) client.setEmail(request.getEmail());
 
         Client saved = clientRepository.save(client);
+
+        // Sync with Keycloak
+        if (client.getKeycloakId() != null) {
+            syncToKeycloak(client);
+        }
+
         return toResponseDTO(saved);
+    }
+
+    // Synchronize profile changes to Keycloak
+    private void syncToKeycloak(Client client) {
+        try {
+            UserResource userResource = keycloak.realm(realm)
+                    .users()
+                    .get(client.getKeycloakId());
+
+            UserRepresentation user = userResource.toRepresentation();
+            user.setFirstName(client.getPrenom());
+            user.setLastName(client.getNom());
+            user.setEmail(client.getEmail());
+
+            userResource.update(user);
+        } catch (Exception e) {
+            // Log error but don't fail the request
+            System.err.println("Failed to sync to Keycloak: " + e.getMessage());
+        }
     }
 
     // Si besoin, crée le client en DB à partir des claims Keycloak
     private Client getOrCreateFromJwt(Jwt jwt, String email) {
-        return clientRepository.findByEmail(email).orElseGet(() -> {
-            Client c = new Client();
-            c.setEmail(email);
-            c.setNom(jwt.getClaimAsString("family_name"));
-            c.setPrenom(jwt.getClaimAsString("given_name"));
-            c.setKeycloakId(jwt.getSubject());
-            c.setRole("CLIENT");
-            return clientRepository.save(c);
-        });
+        String keycloakId = jwt.getSubject();
+        return clientRepository.findByKeycloakId(keycloakId)
+                .orElseGet(() -> clientRepository.findByEmail(email)
+                        .orElseGet(() -> {
+                            Client c = new Client();
+                            c.setEmail(email);
+                            c.setNom(jwt.getClaimAsString("family_name"));
+                            c.setPrenom(jwt.getClaimAsString("given_name"));
+                            c.setKeycloakId(keycloakId);
+                            c.setRole("CLIENT");
+                            return clientRepository.save(c);
+                        }));
     }
 
     private ClientResponseDTO toResponseDTO(Client client) {

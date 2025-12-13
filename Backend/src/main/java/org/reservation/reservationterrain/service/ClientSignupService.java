@@ -54,6 +54,15 @@ public class ClientSignupService {
 
         String keycloakId = response.getLocation().getPath().replaceAll(".*/([^/]+)$", "$1");
 
+        // 1.5 Assign Role CLIENT
+        try {
+            var roleRepresentation = realmResource.roles().get("CLIENT").toRepresentation();
+            usersResource.get(keycloakId).roles().realmLevel().add(List.of(roleRepresentation));
+        } catch (Exception e) {
+            // Log but don't fail, or fail if role is critical
+            System.err.println("Warning: Could not assign CLIENT role: " + e.getMessage());
+        }
+
         // 2. Créer Client en base
         Client client = new Client();
         client.setKeycloakId(keycloakId);
