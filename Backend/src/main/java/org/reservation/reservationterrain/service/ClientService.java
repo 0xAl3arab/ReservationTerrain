@@ -20,8 +20,8 @@ public class ClientService {
     private final String realm;
 
     public ClientService(ClientRepository clientRepository,
-                         Keycloak keycloak,
-                         @Value("${keycloak.realm}") String realm) {
+            Keycloak keycloak,
+            @Value("${keycloak.realm}") String realm) {
         this.clientRepository = clientRepository;
         this.keycloak = keycloak;
         this.realm = realm;
@@ -61,10 +61,14 @@ public class ClientService {
         Client client = getOrCreateFromJwt(jwt, email);
 
         // Update database
-        if (request.getNom() != null) client.setNom(request.getNom());
-        if (request.getPrenom() != null) client.setPrenom(request.getPrenom());
-        if (request.getNumTele() != null) client.setNumTele(request.getNumTele());
-        if (request.getEmail() != null) client.setEmail(request.getEmail());
+        if (request.getNom() != null)
+            client.setNom(request.getNom());
+        if (request.getPrenom() != null)
+            client.setPrenom(request.getPrenom());
+        if (request.getNumTele() != null)
+            client.setNumTele(request.getNumTele());
+        if (request.getEmail() != null)
+            client.setEmail(request.getEmail());
 
         Client saved = clientRepository.save(client);
 
@@ -103,7 +107,8 @@ public class ClientService {
                         .orElseGet(() -> {
                             Client c = new Client();
                             c.setEmail(email);
-                            c.setNom(jwt.getClaimAsString("family_name"));
+                            String nom = jwt.getClaimAsString("family_name");
+                            c.setNom(nom != null ? nom : ""); // Handle null family_name
                             c.setPrenom(jwt.getClaimAsString("given_name"));
                             c.setKeycloakId(keycloakId);
                             c.setRole("CLIENT");

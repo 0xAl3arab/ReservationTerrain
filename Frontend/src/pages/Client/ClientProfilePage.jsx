@@ -105,10 +105,10 @@ function ClientProfilePage() {
             setProfile(data);
             setSuccess("Profil mis à jour avec succès!");
 
-            // Reload page after 1 second to update navbar
-            setTimeout(() => {
-                window.location.reload();
-            }, 1000);
+            // Page reload removed to prevent session issues. Local state is already updated.
+            // setTimeout(() => {
+            //     window.location.reload();
+            // }, 1000);
         } catch (err) {
             console.error(err);
             setError(err.message || "Erreur lors de la mise à jour du profil");
