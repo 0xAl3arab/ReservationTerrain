@@ -42,11 +42,15 @@ function ClientLoginPage() {
 
             // Redirect to home
             setTimeout(() => {
-                window.location.href = "/";
+                navigate("/");
             }, 500);
         } catch (err) {
             console.error("Login error:", err);
-            setError(err.message || "Erreur de connexion");
+            if (err.message.includes("401") || err.message.includes("403")) {
+                setError("Email ou mot de passe incorrect.");
+            } else {
+                setError("Impossible de se connecter. Veuillez vérifier votre connexion.");
+            }
         } finally {
             setLoading(false);
         }

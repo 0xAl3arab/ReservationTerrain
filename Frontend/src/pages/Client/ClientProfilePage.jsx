@@ -65,7 +65,13 @@ function ClientProfilePage() {
             });
         } catch (err) {
             console.error(err);
-            setError("Impossible de charger le profil. Veuillez vous reconnecter.");
+            if (err.message.includes("401")) {
+                setError("Votre session a expiré. Veuillez vous reconnecter.");
+                // Optional: Auto-redirect to login after a delay
+                // setTimeout(() => navigate("/login"), 2000);
+            } else {
+                setError("Impossible de charger le profil. Veuillez réessayer plus tard.");
+            }
         } finally {
             setLoading(false);
         }
@@ -111,7 +117,13 @@ function ClientProfilePage() {
             // }, 1000);
         } catch (err) {
             console.error(err);
-            setError(err.message || "Erreur lors de la mise à jour du profil");
+            if (err.message.includes("401")) {
+                setError("Session expirée. Veuillez vous reconnecter pour sauvegarder.");
+            } else if (err.message.includes("Email déjà utilisé")) {
+                setError("Cet email est déjà utilisé par un autre compte.");
+            } else {
+                setError("Une erreur est survenue lors de la mise à jour. Veuillez réessayer.");
+            }
         } finally {
             setProfileLoading(false);
             setIsEditing(false);
@@ -180,7 +192,11 @@ function ClientProfilePage() {
             });
         } catch (err) {
             console.error(err);
-            setError(err.message || "Erreur lors du changement de mot de passe");
+            if (err.message.includes("401")) {
+                setError("Session expirée. Veuillez vous reconnecter.");
+            } else {
+                setError("Erreur lors du changement de mot de passe. Vérifiez votre mot de passe actuel.");
+            }
         } finally {
             setPasswordLoading(false);
         }

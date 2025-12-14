@@ -6,9 +6,8 @@ import ClientProfilePage from "./pages/Client/ClientProfilePage.jsx";
 
 function App() {
     return (
+
         <BrowserRouter>
-
-
             <Routes>
                 <Route path="/" element={<ComplexeListPage />} />
                 <Route path="/signup" element={<ClientSignupPage />} />

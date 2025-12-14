@@ -56,6 +56,7 @@ public class ClientService {
     }
 
     // Mise à jour du profil avec synchronisation Keycloak
+    @org.springframework.transaction.annotation.Transactional
     public ClientResponseDTO updateProfile(Jwt jwt, ClientProfileUpdateRequest request) {
         String email = jwt.getClaimAsString("email");
         Client client = getOrCreateFromJwt(jwt, email);
@@ -82,21 +83,16 @@ public class ClientService {
 
     // Synchronize profile changes to Keycloak
     private void syncToKeycloak(Client client) {
-        try {
-            UserResource userResource = keycloak.realm(realm)
-                    .users()
-                    .get(client.getKeycloakId());
+        UserResource userResource = keycloak.realm(realm)
+                .users()
+                .get(client.getKeycloakId());
 
-            UserRepresentation user = userResource.toRepresentation();
-            user.setFirstName(client.getPrenom());
-            user.setLastName(client.getNom());
-            user.setEmail(client.getEmail());
+        UserRepresentation user = userResource.toRepresentation();
+        user.setFirstName(client.getPrenom());
+        user.setLastName(client.getNom());
+        user.setEmail(client.getEmail());
 
-            userResource.update(user);
-        } catch (Exception e) {
-            // Log error but don't fail the request
-            System.err.println("Failed to sync to Keycloak: " + e.getMessage());
-        }
+        userResource.update(user);
     }
 
     // Si besoin, crée le client en DB à partir des claims Keycloak
