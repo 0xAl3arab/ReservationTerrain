@@ -66,9 +66,13 @@ function ClientProfilePage() {
         } catch (err) {
             console.error(err);
             if (err.message.includes("401")) {
-                setError("Votre session a expiré. Veuillez vous reconnecter.");
-                // Optional: Auto-redirect to login after a delay
-                // setTimeout(() => navigate("/login"), 2000);
+                // Clear invalid tokens
+                localStorage.removeItem("kc_access_token");
+                localStorage.removeItem("kc_refresh_token");
+
+                setError("Votre session a expiré. Redirection vers la page de connexion...");
+                // Auto-redirect to login after showing the message
+                setTimeout(() => navigate("/login"), 1500);
             } else {
                 setError("Impossible de charger le profil. Veuillez réessayer plus tard.");
             }
@@ -118,7 +122,12 @@ function ClientProfilePage() {
         } catch (err) {
             console.error(err);
             if (err.message.includes("401")) {
-                setError("Session expirée. Veuillez vous reconnecter pour sauvegarder.");
+                // Clear invalid tokens
+                localStorage.removeItem("kc_access_token");
+                localStorage.removeItem("kc_refresh_token");
+
+                setError("Session expirée. Redirection vers la page de connexion...");
+                setTimeout(() => navigate("/login"), 1500);
             } else if (err.message.includes("Email déjà utilisé")) {
                 setError("Cet email est déjà utilisé par un autre compte.");
             } else {
@@ -193,7 +202,12 @@ function ClientProfilePage() {
         } catch (err) {
             console.error(err);
             if (err.message.includes("401")) {
-                setError("Session expirée. Veuillez vous reconnecter.");
+                // Clear invalid tokens
+                localStorage.removeItem("kc_access_token");
+                localStorage.removeItem("kc_refresh_token");
+
+                setError("Session expirée. Redirection vers la page de connexion...");
+                setTimeout(() => navigate("/login"), 1500);
             } else {
                 setError("Erreur lors du changement de mot de passe. Vérifiez votre mot de passe actuel.");
             }

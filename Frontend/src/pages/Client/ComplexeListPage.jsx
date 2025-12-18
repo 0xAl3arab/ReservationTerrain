@@ -50,6 +50,10 @@ const ComplexeListPage = () => {
                             lastName: data.nom,
                             email: data.email
                         });
+                    } else if (response.status === 401) {
+                        localStorage.removeItem("kc_access_token");
+                        localStorage.removeItem("kc_refresh_token");
+                        setUser(null);
                     }
                 } catch (error) {
                     console.error("Background profile fetch failed:", error);

@@ -24,7 +24,8 @@ public class SecurityConfig {
 
         http
                 .csrf(csrf -> csrf.disable())
-                .cors(cors -> {})   // *** enable CORS with WebConfig ***
+                .cors(cors -> {
+                }) // *** enable CORS with WebConfig ***
                 .authorizeHttpRequests(auth -> auth
                         // Always allow CORS preflight
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
@@ -32,20 +33,25 @@ public class SecurityConfig {
                         // Public auth + public APIs
                         .requestMatchers("/auth/client/**").permitAll()
                         .requestMatchers("/api/complexes/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/terrains/**").permitAll() // Allow public access to
+                                                                                         // terrain info and
+                                                                                         // reservations
                         .requestMatchers("/error").permitAll()
 
                         // Protected by role
-                        .requestMatchers("/client/profile", "/client/password").authenticated() // Allow profile access to all logged in users (fixes legacy account issues)
+                        .requestMatchers("/api/reservations").authenticated() // Require auth for creating reservations
+                        .requestMatchers("/client/profile", "/client/password").authenticated() // Allow profile access
+                                                                                                // to all logged in
+                                                                                                // users (fixes legacy
+                                                                                                // account issues)
                         .requestMatchers("/client/**").hasRole("CLIENT")
                         .requestMatchers("/owner/**").hasRole("OWNER")
                         .requestMatchers("/admin/**").hasRole("ADMIN")
 
                         // Any other endpoint needs a valid token
-                        .anyRequest().authenticated()
-                )
+                        .anyRequest().authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2
-                        .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
-                );
+                        .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())));
 
         return http.build();
     }

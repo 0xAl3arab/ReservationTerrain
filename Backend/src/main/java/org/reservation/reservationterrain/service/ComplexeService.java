@@ -31,4 +31,16 @@ public class ComplexeService {
                 })
                 .collect(Collectors.toList());
     }
+
+    public ComplexeResponse getComplexeById(Long id) {
+        Complexe complexe = complexeRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Complexe non trouvé avec l'ID: " + id));
+
+        ComplexeResponse dto = new ComplexeResponse();
+        dto.setId(complexe.getId());
+        dto.setNom(complexe.getNom());
+        dto.setVille(complexe.getVille());
+        dto.setAdress(complexe.getAdress());
+        return dto;
+    }
 }

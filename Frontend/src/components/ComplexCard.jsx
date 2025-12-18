@@ -1,9 +1,16 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const ComplexCard = ({ complex }) => {
+    const navigate = useNavigate();
+
     // Use pre-calculated display data from parent to ensure stability during filtering
     const minPrice = complex.displayMinPrice;
     const terrainCount = complex.displayTerrainCount;
+
+    const handleViewTerrains = () => {
+        navigate(`/complexes/${complex.id}/terrains`);
+    };
 
     return (
         <div className="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-shadow duration-300 border border-gray-100 overflow-hidden flex flex-col md:flex-row group">
@@ -55,7 +62,10 @@ const ComplexCard = ({ complex }) => {
                         <span className="text-xs text-gray-500 font-medium">À partir de</span>
                         <span className="text-lg font-bold text-[#0B2CFF]">{minPrice} MAD <span className="text-sm font-normal text-gray-400">/ heure</span></span>
                     </div>
-                    <button className="bg-[#0B2CFF] text-white px-6 py-2.5 rounded-lg font-semibold text-sm hover:bg-[#001B87] transition-colors shadow-md shadow-blue-200">
+                    <button
+                        onClick={handleViewTerrains}
+                        className="bg-[#0B2CFF] text-white px-6 py-2.5 rounded-lg font-semibold text-sm hover:bg-[#001B87] transition-colors shadow-md shadow-blue-200"
+                    >
                         Voir les terrains
                     </button>
                 </div>
