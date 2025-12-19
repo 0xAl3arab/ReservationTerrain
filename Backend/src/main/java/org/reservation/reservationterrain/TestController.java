@@ -9,5 +9,6 @@ public class TestController {
     @GetMapping("/test")
     public String bonjour() {
         return "Connexion réussie ! Si tu vois ce message, ton Token Keycloak est valide.";
+        /* Test */
     }
 }
