@@ -22,26 +22,14 @@ public class ComplexeService {
         this.ownerRepository = ownerRepository;
     }
 
-    // =========================================================
-    // PARTIE CLIENT (Celle qui manquait et causait l'erreur)
-    // =========================================================
-
-    /**
-     * Récupère tous les complexes (pour l'affichage public coté client)
-     */
+    // --- CLIENT ---
     public List<ComplexeResponse> getAllComplexes() {
         return complexeRepository.findAll().stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
     }
 
-    // =========================================================
-    // PARTIE OWNER (Tes fonctionnalités)
-    // =========================================================
-
-    /**
-     * Récupère uniquement les complexes du propriétaire connecté.
-     */
+    // --- OWNER : RECUPERER ---
     public List<ComplexeResponse> getMyComplexes(String keycloakId) {
         Owner owner = ownerRepository.findByKeycloakId(keycloakId)
                 .orElseThrow(() -> new RuntimeException("Propriétaire non trouvé (Keycloak ID: " + keycloakId + ")"));
@@ -52,9 +40,7 @@ public class ComplexeService {
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Crée un nouveau complexe lié au propriétaire.
-     */
+    // --- OWNER : CREER ---
     public ComplexeResponse createComplexe(ComplexeRequest request, String keycloakId) {
         Owner owner = ownerRepository.findByKeycloakId(keycloakId)
                 .orElseThrow(() -> new RuntimeException("Erreur : Le propriétaire n'existe pas."));
@@ -62,7 +48,6 @@ public class ComplexeService {
         Complexe complexe = new Complexe();
         complexe.setNom(request.getNom());
         complexe.setVille(request.getVille());
-        // On respecte l'orthographe du DTO
         complexe.setAdress(request.getAdress());
 
         complexe.setOwner(owner);
@@ -71,10 +56,20 @@ public class ComplexeService {
         return mapToResponse(savedComplexe);
     }
 
-    // =========================================================
-    // UTILITAIRES
-    // =========================================================
+    // --- OWNER : SUPPRIMER (NOUVEAU) ---
+    public void deleteComplexe(Long id, String keycloakId) {
+        Complexe complexe = complexeRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Complexe introuvable"));
 
+        // Sécurité : On vérifie que le owner du complexe est bien celui connecté
+        if (!complexe.getOwner().getKeycloakId().equals(keycloakId)) {
+            throw new RuntimeException("Accès refusé : Vous ne pouvez pas supprimer ce complexe.");
+        }
+
+        complexeRepository.delete(complexe);
+    }
+
+    // --- UTILITAIRE ---
     private ComplexeResponse mapToResponse(Complexe c) {
         ComplexeResponse dto = new ComplexeResponse();
         dto.setId(c.getId());

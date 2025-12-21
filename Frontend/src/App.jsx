@@ -6,12 +6,16 @@ import ClientSignupPage from "./pages/Client/ClientSignup.jsx";
 import ClientLoginPage from "./pages/Client/ClientLoginPage.jsx";
 import ComplexeListPage from "./pages/Client/ComplexeListPage.jsx";
 import ClientProfilePage from "./pages/Client/ClientProfilePage.jsx";
+import ComplexeDetailsPage from "./pages/Client/ComplexeDetailsPage.jsx";
 
 // Owner
 import OwnerLayout from "./layouts/OwnerLayout";
+import OwnerDashboard from "./pages/Owner/OwnerDashboard";
 import OwnerComplexes from "./pages/Owner/OwnerComplexes";
 import OwnerLoginPage from "./pages/Owner/OwnerLoginPage";
-import OwnerComplexDetails from "./pages/Owner/OwnerComplexDetails"; 
+// 👇 1. VÉRIFIE QUE CET IMPORT EST PRÉSENT
+import OwnerComplexDetails from "./pages/Owner/OwnerComplexDetails";
+import OwnerReservations from "./pages/Owner/OwnerReservations";
 
 function App() {
     return (
@@ -22,17 +26,20 @@ function App() {
                 <Route path="/signup" element={<ClientSignupPage />} />
                 <Route path="/login" element={<ClientLoginPage />} />
                 <Route path="/profile" element={<ClientProfilePage />} />
+                <Route path="/complexes/:id" element={<ComplexeDetailsPage />} />
 
-                {/* --- OWNER PUBLIC --- */}
+                {/* --- OWNER --- */}
                 <Route path="/owner/login" element={<OwnerLoginPage />} />
 
-                {/* --- OWNER PRIVÉ --- */}
                 <Route path="/owner" element={<OwnerLayout />}>
-                    <Route index element={<Navigate to="complexes" replace />} />
+                    <Route index element={<Navigate to="dashboard" replace />} />
+                    <Route path="dashboard" element={<OwnerDashboard />} />
                     <Route path="complexes" element={<OwnerComplexes />} />
                     
-                    {/* 👇 VÉRIFIE QUE CETTE LIGNE EST BIEN DANS LA ROUTE OWNER */}
+                    {/* 👇 2. VÉRIFIE QUE CETTE ROUTE EXISTE BIEN ICI */}
                     <Route path="complexes/:id" element={<OwnerComplexDetails />} />
+                    
+                    <Route path="reservations" element={<OwnerReservations />} />
                 </Route>
 
                 <Route path="*" element={<Navigate to="/" replace />} />
