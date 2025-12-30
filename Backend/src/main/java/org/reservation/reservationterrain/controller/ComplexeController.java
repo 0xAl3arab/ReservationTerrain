@@ -35,4 +35,21 @@ public class ComplexeController {
         return terrainService.getTerrainsByComplexe(complexeId);
     }
 
+    @PostMapping
+    public ComplexeResponse createComplexe(
+            @RequestBody org.reservation.reservationterrain.dto.ComplexeRequest request) {
+        return complexeService.createComplexe(request);
+    }
+
+    @PutMapping("/{id}")
+    public ComplexeResponse updateComplexe(@PathVariable Long id,
+            @RequestBody org.reservation.reservationterrain.dto.ComplexeRequest request) {
+        return complexeService.updateComplexe(id, request);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteComplexe(@PathVariable Long id) {
+        complexeService.deleteComplexe(id);
+    }
+
 }

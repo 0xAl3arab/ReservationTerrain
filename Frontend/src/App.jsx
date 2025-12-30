@@ -6,6 +6,9 @@ import ClientProfilePage from "./pages/Client/ClientProfilePage.jsx";
 import TerrainDetailsPage from "./pages/Client/TerrainDetailsPage.jsx";
 import PaiementPage from "./pages/Client/PaiementPage.jsx";
 import ConfirmationPage from "./pages/Client/ConfirmationPage.jsx";
+import AdminLoginPage from "./pages/Admin/AdminLoginPage.jsx";
+import AdminDashboard from "./pages/Admin/AdminDashboard.jsx";
+import AdminComplexesPage from "./pages/Admin/AdminComplexesPage.jsx";
 
 function App() {
     return (
@@ -19,6 +22,9 @@ function App() {
                 <Route path="/complexes/:id/terrains" element={<TerrainDetailsPage />} />
                 <Route path="/paiement" element={<PaiementPage />} />
                 <Route path="/confirmation" element={<ConfirmationPage />} />
+                <Route path="/admin/login" element={<AdminLoginPage />} />
+                <Route path="/admin/dashboard" element={<AdminDashboard />} />
+                <Route path="/admin/complexes" element={<AdminComplexesPage />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
         </BrowserRouter>

@@ -2,57 +2,54 @@ package org.reservation.reservationterrain.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 @Configuration
-@EnableMethodSecurity
+@EnableWebSecurity
 public class SecurityConfig {
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .csrf(AbstractHttpConfigurer::disable)
+                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Enable CORS
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/complexes/**").permitAll()
+                        .requestMatchers("/auth/client/**").permitAll()
+                        .requestMatchers("/admin/login").permitAll() // Allow Admin Login
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .anyRequest().authenticated())
+                .oauth2ResourceServer(oauth2 -> oauth2
+                        .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())));
+        return http.build();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(List.of("http://localhost:5173")); // Allow Frontend
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
 
     @Bean
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
         converter.setJwtGrantedAuthoritiesConverter(new KeycloakRealmRoleConverter());
         return converter;
-    }
-
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
-        http
-                .csrf(csrf -> csrf.disable())
-                .cors(cors -> {
-                }) // *** enable CORS with WebConfig ***
-                .authorizeHttpRequests(auth -> auth
-                        // Always allow CORS preflight
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-
-                        // Public auth + public APIs
-                        .requestMatchers("/auth/client/**").permitAll()
-                        .requestMatchers("/api/complexes/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/terrains/**").permitAll() // Allow public access to
-                                                                                         // terrain info and
-                                                                                         // reservations
-                        .requestMatchers("/error").permitAll()
-
-                        // Protected by role
-                        .requestMatchers("/api/reservations").authenticated() // Require auth for creating reservations
-                        .requestMatchers("/client/profile", "/client/password").authenticated() // Allow profile access
-                                                                                                // to all logged in
-                                                                                                // users (fixes legacy
-                                                                                                // account issues)
-                        .requestMatchers("/client/**").hasRole("CLIENT")
-                        .requestMatchers("/owner/**").hasRole("OWNER")
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
-
-                        // Any other endpoint needs a valid token
-                        .anyRequest().authenticated())
-                .oauth2ResourceServer(oauth2 -> oauth2
-                        .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())));
-
-        return http.build();
     }
 }

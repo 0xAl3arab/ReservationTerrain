@@ -29,5 +29,6 @@ public abstract class User {
     @Column(unique = true, nullable = true)
     private String numTele;
 
-    public User() {}
+    public User() {
+    }
 }

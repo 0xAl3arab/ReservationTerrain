@@ -1,0 +1,112 @@
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::staticFieldBase has been called by com.google.inject.internal.aop.HiddenClassDefiner (file:/C:/Users/Abdelali/.m2/wrapper/dists/apache-maven-3.9.11/03d7e36a140982eea48e22c1dcac01d8862b2550b2939e09a0809bbc5182a5bc/lib/guice-5.1.0-classes.jar)
+WARNING: Please consider reporting this to the maintainers of class com.google.inject.internal.aop.HiddenClassDefiner
+WARNING: sun.misc.Unsafe::staticFieldBase will be removed in a future release
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] -----------------< org.reservation:ReservationTerrain >-----------------
+[INFO] Building ReservationTerrain 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] >>> spring-boot:3.5.7:run (default-cli) > test-compile @ ReservationTerrain >>>
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ ReservationTerrain ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 0 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ ReservationTerrain ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ ReservationTerrain ---
+[INFO] skip non existing resourceDirectory C:\Users\Abdelali\IdeaProjects\ReservationTerrain\Backend\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.11.0:testCompile (default-testCompile) @ ReservationTerrain ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] <<< spring-boot:3.5.7:run (default-cli) < test-compile @ ReservationTerrain <<<
+[INFO] 
+[INFO] 
+[INFO] --- spring-boot:3.5.7:run (default-cli) @ ReservationTerrain ---
+[INFO] Attaching agents: []
+Standard Commons Logging discovery in action with spring-jcl: please remove commons-logging.jar from classpath in order to avoid potential conflicts
+Standard Commons Logging discovery in action with spring-jcl: please remove commons-logging.jar from classpath in order to avoid potential conflicts
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.5.7)
+
+2025-12-29T19:35:41.578+01:00  INFO 20924 --- [ReservationTerrain] [  restartedMain] o.r.r.ReservationTerrainApplication      : Starting ReservationTerrainApplication using Java 24.0.1 with PID 20924 (C:\Users\Abdelali\IdeaProjects\ReservationTerrain\Backend\target\classes started by Abdelali in C:\Users\Abdelali\IdeaProjects\ReservationTerrain\Backend)
+2025-12-29T19:35:41.580+01:00  INFO 20924 --- [ReservationTerrain] [  restartedMain] o.r.r.ReservationTerrainApplication      : No active profile set, falling back to 1 default profile: "default"
+2025-12-29T19:35:41.680+01:00  INFO 20924 --- [ReservationTerrain] [  restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-12-29T19:35:41.681+01:00  INFO 20924 --- [ReservationTerrain] [  restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-12-29T19:35:42.903+01:00  INFO 20924 --- [ReservationTerrain] [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-12-29T19:35:43.132+01:00  INFO 20924 --- [ReservationTerrain] [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 214 ms. Found 6 JPA repository interfaces.
+2025-12-29T19:35:44.648+01:00  INFO 20924 --- [ReservationTerrain] [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-12-29T19:35:44.672+01:00  INFO 20924 --- [ReservationTerrain] [  restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-12-29T19:35:44.672+01:00  INFO 20924 --- [ReservationTerrain] [  restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.48]
+2025-12-29T19:35:44.735+01:00  INFO 20924 --- [ReservationTerrain] [  restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-12-29T19:35:44.735+01:00  INFO 20924 --- [ReservationTerrain] [  restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 3053 ms
+Standard Commons Logging discovery in action with spring-jcl: please remove commons-logging.jar from classpath in order to avoid potential conflicts
+2025-12-29T19:35:45.009+01:00  INFO 20924 --- [ReservationTerrain] [  restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-12-29T19:35:45.082+01:00  INFO 20924 --- [ReservationTerrain] [  restartedMain] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.33.Final
+2025-12-29T19:35:45.126+01:00  INFO 20924 --- [ReservationTerrain] [  restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-12-29T19:35:45.601+01:00  INFO 20924 --- [ReservationTerrain] [  restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-12-29T19:35:45.652+01:00  INFO 20924 --- [ReservationTerrain] [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-12-29T19:35:45.982+01:00  INFO 20924 --- [ReservationTerrain] [  restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@233dc1ee
+2025-12-29T19:35:45.984+01:00  INFO 20924 --- [ReservationTerrain] [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-12-29T19:35:46.026+01:00  WARN 20924 --- [ReservationTerrain] [  restartedMain] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-12-29T19:35:46.050+01:00  INFO 20924 --- [ReservationTerrain] [  restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 18.1
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-12-29T19:35:47.874+01:00  INFO 20924 --- [ReservationTerrain] [  restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-12-29T19:35:48.086+01:00  INFO 20924 --- [ReservationTerrain] [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-12-29T19:35:49.305+01:00  INFO 20924 --- [ReservationTerrain] [  restartedMain] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-12-29T19:35:50.287+01:00  WARN 20924 --- [ReservationTerrain] [  restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-12-29T19:35:50.348+01:00 TRACE 20924 --- [ReservationTerrain] [  restartedMain] eGlobalAuthenticationAutowiredConfigurer : Eagerly initializing {org.springframework.boot.autoconfigure.security.servlet.SpringBootWebSecurityConfiguration$WebSecurityEnablerConfiguration=org.springframework.boot.autoconfigure.security.servlet.SpringBootWebSecurityConfiguration$WebSecurityEnablerConfiguration@357251a3}
+2025-12-29T19:35:50.350+01:00 DEBUG 20924 --- [ReservationTerrain] [  restartedMain] swordEncoderAuthenticationManagerBuilder : No authenticationProviders and no parentAuthenticationManager defined. Returning null.
+2025-12-29T19:35:51.059+01:00 DEBUG 20924 --- [ReservationTerrain] [  restartedMain] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with filters: DisableEncodeUrlFilter, WebAsyncManagerIntegrationFilter, SecurityContextHolderFilter, HeaderWriterFilter, CorsFilter, LogoutFilter, BearerTokenAuthenticationFilter, AuthenticationFilter, RequestCacheAwareFilter, SecurityContextHolderAwareRequestFilter, AnonymousAuthenticationFilter, ExceptionTranslationFilter, AuthorizationFilter
+2025-12-29T19:35:51.109+01:00  INFO 20924 --- [ReservationTerrain] [  restartedMain] o.s.v.b.OptionalValidatorFactoryBean     : Failed to set up a Bean Validation provider: jakarta.validation.NoProviderFoundException: Unable to create a Configuration, because no Jakarta Bean Validation provider could be found. Add a provider like Hibernate Validator (RI) to your classpath.
+2025-12-29T19:35:51.509+01:00  INFO 20924 --- [ReservationTerrain] [  restartedMain] .w.s.a.s.AnnotationActionEndpointMapping : Supporting [WS-Addressing August 2004, WS-Addressing 1.0]
+2025-12-29T19:35:51.560+01:00  WARN 20924 --- [ReservationTerrain] [  restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : Unable to start LiveReload server
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::allocateMemory has been called by io.netty.util.internal.PlatformDependent0$2 (file:/C:/Users/Abdelali/.m2/repository/io/netty/netty-common/4.1.128.Final/netty-common-4.1.128.Final.jar)
+WARNING: Please consider reporting this to the maintainers of class io.netty.util.internal.PlatformDependent0$2
+WARNING: sun.misc.Unsafe::allocateMemory will be removed in a future release
+2025-12-29T19:35:51.676+01:00  WARN 20924 --- [ReservationTerrain] [  restartedMain] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Failed to start bean 'webServerStartStop'
+2025-12-29T19:35:51.680+01:00  INFO 20924 --- [ReservationTerrain] [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-12-29T19:35:51.684+01:00  INFO 20924 --- [ReservationTerrain] [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-12-29T19:35:51.692+01:00  INFO 20924 --- [ReservationTerrain] [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-12-29T19:35:51.707+01:00  INFO 20924 --- [ReservationTerrain] [  restartedMain] .s.b.a.l.ConditionEvaluationReportLogger : 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2025-12-29T19:35:51.734+01:00 ERROR 20924 --- [ReservationTerrain] [  restartedMain] o.s.b.d.LoggingFailureAnalysisReporter   : 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Web server failed to start. Port 8080 was already in use.
+
+Action:
+
+Identify and stop the process that's listening on port 8080 or configure this application to listen on another port.
+
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  21.778 s
+[INFO] Finished at: 2025-12-29T19:35:51+01:00
+[INFO] ------------------------------------------------------------------------

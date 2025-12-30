@@ -1,6 +1,5 @@
 package org.reservation.reservationterrain.security;
 
-
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -27,7 +26,7 @@ public class KeycloakRealmRoleConverter implements Converter<Jwt, Collection<Gra
 
         return roles.stream()
                 .filter(role -> role instanceof String)
-                .map(role -> "ROLE_" + role)               // CLIENT -> ROLE_CLIENT
+                .map(role -> "ROLE_" + role) // CLIENT -> ROLE_CLIENT
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
     }

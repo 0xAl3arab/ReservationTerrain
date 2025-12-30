@@ -1,16 +1,16 @@
 package org.reservation.reservationterrain.model;
 
-import jakarta.persistence.*;      // IMPORTANT
+import jakarta.persistence.*; // IMPORTANT
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;        // IMPORTANT
-import java.util.List;            // IMPORTANT
+import java.util.ArrayList; // IMPORTANT
+import java.util.List; // IMPORTANT
 
 @Getter
 @Setter
 @Entity
-@Table(name="complexe")
+@Table(name = "complexe")
 public class Complexe {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
