@@ -71,14 +71,25 @@ const ComplexeListPage = () => {
         window.location.reload();
     };
 
+    const [activeTerrainsCount, setActiveTerrainsCount] = useState(0);
+
     // Data Fetching
     const fetchComplexes = async () => {
         setLoading(true);
         setError(null);
         try {
-            const response = await fetch("http://localhost:8080/api/complexes");
-            if (!response.ok) throw new Error("Erreur réseau");
-            const data = await response.json();
+            const [complexesRes, activeCountRes] = await Promise.all([
+                fetch("http://localhost:8080/api/complexes"),
+                fetch("http://localhost:8080/api/terrains/active/total-count")
+            ]);
+
+            if (!complexesRes.ok) throw new Error("Erreur réseau");
+
+            const data = await complexesRes.json();
+            if (activeCountRes.ok) {
+                const count = await activeCountRes.json();
+                setActiveTerrainsCount(count);
+            }
 
             // Stabilize mock data here
             const enrichedData = data.map(c => {
@@ -209,9 +220,15 @@ const ComplexeListPage = () => {
 
                 {/* Results */}
                 <div className="mb-8 flex items-center justify-between">
-                    <h2 className="text-2xl font-bold text-gray-900">
-                        Terrains disponibles <span className="text-gray-400 font-normal text-lg ml-2">({filteredComplexes.length})</span>
-                    </h2>
+                    <div className="flex items-center gap-4">
+                        <h2 className="text-2xl font-bold text-gray-900">
+                            Terrains disponibles <span className="text-gray-400 font-normal text-lg ml-2">({filteredComplexes.length})</span>
+                        </h2>
+                        <div className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold border border-green-200 flex items-center gap-2">
+                            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                            {activeTerrainsCount} Active Terrains System-wide
+                        </div>
+                    </div>
                 </div>
 
                 {loading ? (

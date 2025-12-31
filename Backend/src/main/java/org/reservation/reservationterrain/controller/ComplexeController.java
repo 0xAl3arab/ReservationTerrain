@@ -25,6 +25,11 @@ public class ComplexeController {
         return complexeService.getAllComplexes();
     }
 
+    @GetMapping("/count")
+    public long countComplexes() {
+        return complexeService.countComplexes();
+    }
+
     @GetMapping("/{id}")
     public ComplexeResponse getComplexeById(@PathVariable Long id) {
         return complexeService.getComplexeById(id);

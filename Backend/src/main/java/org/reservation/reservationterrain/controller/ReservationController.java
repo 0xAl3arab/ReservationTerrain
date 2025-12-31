@@ -59,6 +59,81 @@ public class ReservationController {
         return ResponseEntity.ok(reservations);
     }
 
+    @GetMapping("/reservations/week")
+    public ResponseEntity<List<ReservationResponse>> getWeeklyReservations(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
+        return ResponseEntity.ok(reservationService.getReservationsByDateRange(from, to));
+    }
+
+    @GetMapping("/reservations/count")
+    public long countTotalReservations() {
+        return reservationService.countTotalReservations();
+    }
+
+    @GetMapping("/reservations/week/count")
+    public long countWeeklyReservations(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
+        return reservationService.countWeeklyReservations(from, to);
+    }
+
+    @GetMapping("/reservations/filter")
+    public ResponseEntity<List<ReservationResponse>> getReservationsWithFilters(
+            @RequestParam(required = false) Long complexId,
+            @RequestParam(required = false) Long clientId,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateFrom,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateTo,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) Integer minDuration,
+            @RequestParam(required = false) Integer maxDuration) {
+        return ResponseEntity.ok(reservationService.getReservationsWithFilters(
+                complexId, clientId, dateFrom, dateTo,
+                status,
+                minDuration, maxDuration));
+    }
+
+    @PutMapping("/reservations/{id}")
+    public ResponseEntity<?> updateReservation(
+            @PathVariable Long id,
+            @RequestBody ReservationRequest request) {
+        try {
+            ReservationResponse response = reservationService.updateReservation(id, request);
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResponse("Une erreur inattendue s'est produite"));
+        }
+    }
+
+    @DeleteMapping("/reservations/{id}")
+    public ResponseEntity<?> deleteReservation(@PathVariable Long id) {
+        try {
+            reservationService.deleteReservation(id);
+            return ResponseEntity.noContent().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResponse("Une erreur inattendue s'est produite"));
+        }
+    }
+
+    @DeleteMapping("/reservations")
+    public ResponseEntity<?> deleteReservations(@RequestBody List<Long> ids) {
+        try {
+            reservationService.deleteReservations(ids);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResponse("Une erreur inattendue s'est produite"));
+        }
+    }
+
     // Simple error response class
     private static class ErrorResponse {
         private final String message;

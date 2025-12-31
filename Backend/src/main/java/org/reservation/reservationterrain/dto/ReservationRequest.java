@@ -11,4 +11,5 @@ public class ReservationRequest {
     private LocalDate date;
     private LocalTime heureDebut;
     private LocalTime heureFin;
+    private String status;
 }

@@ -36,4 +36,9 @@ public class TerrainService {
 
         return terrainDtos;
     }
+
+    public long countActiveTerrains() {
+        return terrainRepository.count(); // Returning total count to ensure all terrains are counted regardless of
+                                          // status
+    }
 }

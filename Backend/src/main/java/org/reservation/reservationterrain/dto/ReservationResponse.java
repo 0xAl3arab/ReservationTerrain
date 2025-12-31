@@ -17,8 +17,11 @@ public class ReservationResponse {
     // Terrain info
     private Long terrainId;
     private String terrainNom;
+    private String complexNom;
+    private String price; // String to match Terrain.prixTerrain
 
     // Client info
     private Long clientId;
     private String clientNom;
+    private String clientEmail;
 }

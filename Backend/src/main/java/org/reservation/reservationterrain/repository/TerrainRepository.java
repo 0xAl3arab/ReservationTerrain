@@ -10,4 +10,6 @@ import java.util.List;
 public interface TerrainRepository extends JpaRepository<Terrain, Long> {
 
     List<Terrain> findByComplexe_Id(Long complexeId);
+
+    long countByStatus(String status);
 }

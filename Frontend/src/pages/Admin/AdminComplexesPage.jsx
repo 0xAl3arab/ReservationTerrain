@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminNavbar from "../../components/Admin/AdminNavbar";
+import CreateOwnerModal from "../../components/Admin/CreateOwnerModal";
 
 function AdminComplexesPage() {
     const navigate = useNavigate();
@@ -12,6 +13,7 @@ function AdminComplexesPage() {
     // Modal State
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [isCreateOwnerModalOpen, setIsCreateOwnerModalOpen] = useState(false);
     const [currentComplex, setCurrentComplex] = useState(null);
     const [formData, setFormData] = useState({
         nom: "",
@@ -133,6 +135,11 @@ function AdminComplexesPage() {
             console.error("Error deleting complex:", err);
             alert("Failed to delete complex");
         }
+    };
+
+    const handleOwnerCreated = (newOwner) => {
+        setOwners([...owners, newOwner]);
+        setFormData({ ...formData, ownerId: newOwner.id });
     };
 
     return (
@@ -269,20 +276,30 @@ function AdminComplexesPage() {
                             </div>
                             <div>
                                 <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Owner</label>
-                                <select
-                                    name="ownerId"
-                                    value={formData.ownerId}
-                                    onChange={handleInputChange}
-                                    className="w-full bg-[#1a1a1a] border border-[#333] rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#0B2CFF]"
-                                    required
-                                >
-                                    <option value="">Select an Owner</option>
-                                    {owners.map(owner => (
-                                        <option key={owner.id} value={owner.id}>
-                                            {owner.prenom} {owner.nom} ({owner.email})
-                                        </option>
-                                    ))}
-                                </select>
+                                <div className="flex gap-2">
+                                    <select
+                                        name="ownerId"
+                                        value={formData.ownerId}
+                                        onChange={handleInputChange}
+                                        className="w-full bg-[#1a1a1a] border border-[#333] rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#0B2CFF]"
+                                        required
+                                    >
+                                        <option value="">Select an Owner</option>
+                                        {owners.map(owner => (
+                                            <option key={owner.id} value={owner.id}>
+                                                {owner.prenom} {owner.nom} ({owner.email})
+                                            </option>
+                                        ))}
+                                    </select>
+                                    <button
+                                        type="button"
+                                        onClick={() => setIsCreateOwnerModalOpen(true)}
+                                        className="bg-[#222] hover:bg-[#333] text-white px-4 rounded-xl font-bold transition-all border border-[#333] whitespace-nowrap"
+                                        title="Create New Owner"
+                                    >
+                                        + New
+                                    </button>
+                                </div>
                             </div>
                             <div className="flex gap-4 mt-8">
                                 <button
@@ -303,6 +320,13 @@ function AdminComplexesPage() {
                     </div>
                 </div>
             )}
+
+            {/* Create Owner Modal */}
+            <CreateOwnerModal
+                isOpen={isCreateOwnerModalOpen}
+                onClose={() => setIsCreateOwnerModalOpen(false)}
+                onSuccess={handleOwnerCreated}
+            />
 
             {/* Delete Confirmation Modal */}
             {isDeleteModalOpen && (

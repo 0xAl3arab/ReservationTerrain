@@ -9,6 +9,7 @@ import ConfirmationPage from "./pages/Client/ConfirmationPage.jsx";
 import AdminLoginPage from "./pages/Admin/AdminLoginPage.jsx";
 import AdminDashboard from "./pages/Admin/AdminDashboard.jsx";
 import AdminComplexesPage from "./pages/Admin/AdminComplexesPage.jsx";
+import AdminReservationsPage from "./pages/Admin/AdminReservationsPage.jsx";
 
 function App() {
     return (
@@ -25,6 +26,7 @@ function App() {
                 <Route path="/admin/login" element={<AdminLoginPage />} />
                 <Route path="/admin/dashboard" element={<AdminDashboard />} />
                 <Route path="/admin/complexes" element={<AdminComplexesPage />} />
+                <Route path="/admin/reservations" element={<AdminReservationsPage />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
         </BrowserRouter>

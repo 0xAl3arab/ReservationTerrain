@@ -20,6 +20,10 @@ public class ComplexeService {
         this.ownerRepository = ownerRepository;
     }
 
+    public long countComplexes() {
+        return complexeRepository.count();
+    }
+
     public List<ComplexeResponse> getAllComplexes() {
         List<Complexe> complexes = complexeRepository.findAll();
 

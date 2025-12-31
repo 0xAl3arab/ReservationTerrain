@@ -33,15 +33,18 @@ function AdminNavbar() {
                         >
                             Complexes
                         </Link>
-                        <a href="#" className="hover:text-white transition-colors">Reservations</a>
-                        <a href="#" className="hover:text-white transition-colors">Terrains</a>
-                        <a href="#" className="hover:text-white transition-colors">Users</a>
+                        <Link
+                            to="/admin/reservations"
+                            className={`${isActive("/admin/reservations") ? "text-white" : "hover:text-white"} transition-colors`}
+                        >
+                            Reservations
+                        </Link>
                     </div>
                 </div>
 
                 <div className="flex items-center gap-4">
                     <div className="text-right hidden sm:block">
-                        <p className="text-xs font-bold text-white">{adminEmail}</p>
+                        <p className="text-xs font-bold text-white">Welcome</p>
                         <p className="text-[10px] text-gray-500 uppercase tracking-widest">Super Admin</p>
                     </div>
                     <button
