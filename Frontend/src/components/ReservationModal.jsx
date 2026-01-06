@@ -121,7 +121,16 @@ const ReservationModal = ({ isOpen, onClose, terrain, complex, selectedDate, sel
 
     const getAvailableStartTimes = () => {
         const options = [];
+        const now = new Date();
+        const currentHour = now.getHours();
+        const isToday = new Date(date).toDateString() === now.toDateString();
+
         for (let i = terrain.heureOuverture; i < terrain.heureFermeture; i++) {
+            // If it's today, skip hours that have passed or are the current hour
+            if (isToday && i <= currentHour) {
+                continue;
+            }
+
             if (!isSlotReserved(i)) {
                 options.push(`${String(i).padStart(2, '0')}:00`);
             }

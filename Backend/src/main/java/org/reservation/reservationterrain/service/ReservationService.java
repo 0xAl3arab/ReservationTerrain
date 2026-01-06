@@ -240,4 +240,40 @@ public class ReservationService {
                                 .map(this::toResponse)
                                 .collect(Collectors.toList());
         }
+
+        @Transactional
+        public void cancelReservation(Long reservationId, String keycloakId) {
+                Reservation reservation = reservationRepository.findById(reservationId)
+                                .orElseThrow(() -> new IllegalArgumentException("Réservation non trouvée"));
+
+                // Verify ownership
+                Client client = clientRepository.findByKeycloakId(keycloakId)
+                                .orElseThrow(() -> new IllegalArgumentException("Client non trouvé"));
+
+                if (!reservation.getClient().getId().equals(client.getId())) {
+                        throw new SecurityException("Vous n'êtes pas autorisé à annuler cette réservation");
+                }
+
+                // Check if already cancelled
+                if ("ANNULEE".equals(reservation.getStatus())) {
+                        throw new IllegalStateException("La réservation est déjà annulée");
+                }
+
+                // Check 3h rule
+                // Reservation Date + Start Time
+                LocalDate resDate = reservation.getDate();
+                LocalTime resTime = reservation.getHeureDebut();
+                java.time.LocalDateTime reservationStart = java.time.LocalDateTime.of(resDate, resTime);
+                java.time.LocalDateTime now = java.time.LocalDateTime.now();
+
+                long hoursUntilStart = java.time.Duration.between(now, reservationStart).toHours();
+
+                if (hoursUntilStart < 3) {
+                        throw new IllegalStateException(
+                                        "L'annulation n'est possible que jusqu'à 3 heures avant le début de la réservation.");
+                }
+
+                reservation.setStatus("ANNULEE");
+                reservationRepository.save(reservation);
+        }
 }

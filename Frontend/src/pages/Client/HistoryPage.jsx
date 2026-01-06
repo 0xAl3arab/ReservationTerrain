@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
+import CancelReservationButton from '../../components/CancelReservationButton';
 
 const HistoryPage = () => {
     const navigate = useNavigate();
@@ -185,6 +186,9 @@ const HistoryPage = () => {
                                         <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             Statut
                                         </th>
+                                        <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Actions
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody className="bg-white divide-y divide-gray-200">
@@ -214,6 +218,34 @@ const HistoryPage = () => {
                                                 <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(reservation.status)}`}>
                                                     {getStatusLabel(reservation.status)}
                                                 </span>
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-right">
+                                                <div className="flex justify-end">
+                                                    <CancelReservationButton
+                                                        reservation={reservation}
+                                                        onCancelSuccess={() => {
+                                                            // Refresh the list
+                                                            const fetchUserData = async () => {
+                                                                const token = localStorage.getItem('kc_access_token');
+                                                                if (!token) return;
+
+                                                                try {
+                                                                    const reservationsResponse = await fetch('http://localhost:8080/api/my-reservations', {
+                                                                        headers: { 'Authorization': `Bearer ${token}` }
+                                                                    });
+                                                                    if (reservationsResponse.ok) {
+                                                                        const reservationsData = await reservationsResponse.json();
+                                                                        reservationsData.sort((a, b) => new Date(b.date) - new Date(a.date));
+                                                                        setReservations(reservationsData);
+                                                                    }
+                                                                } catch (err) {
+                                                                    console.error("Error refreshing reservations:", err);
+                                                                }
+                                                            };
+                                                            fetchUserData();
+                                                        }}
+                                                    />
+                                                </div>
                                             </td>
                                         </tr>
                                     ))}
