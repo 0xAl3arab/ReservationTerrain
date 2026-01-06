@@ -231,4 +231,13 @@ public class ReservationService {
 
                 return response;
         }
+
+        public List<ReservationResponse> getReservationsByKeycloakId(String keycloakId) {
+                Client client = clientRepository.findByKeycloakId(keycloakId)
+                                .orElseThrow(() -> new IllegalArgumentException("Client non trouvé"));
+
+                return reservationRepository.findByClientId(client.getId()).stream()
+                                .map(this::toResponse)
+                                .collect(Collectors.toList());
+        }
 }

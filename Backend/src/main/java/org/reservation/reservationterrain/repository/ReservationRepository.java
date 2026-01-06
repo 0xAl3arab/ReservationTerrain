@@ -62,4 +62,6 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
                         @Param("status") String status,
                         @Param("minDuration") Integer minDuration,
                         @Param("maxDuration") Integer maxDuration);
+
+        List<Reservation> findByClientId(Long clientId);
 }

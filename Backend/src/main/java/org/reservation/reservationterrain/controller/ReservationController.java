@@ -47,6 +47,13 @@ public class ReservationController {
         }
     }
 
+    @GetMapping("/my-reservations")
+    public ResponseEntity<List<ReservationResponse>> getMyReservations(@AuthenticationPrincipal Jwt jwt) {
+        String keycloakId = jwt.getSubject();
+        List<ReservationResponse> reservations = reservationService.getReservationsByKeycloakId(keycloakId);
+        return ResponseEntity.ok(reservations);
+    }
+
     @GetMapping("/terrains/{terrainId}/reservations")
     public ResponseEntity<List<ReservationResponse>> getTerrainReservations(
             @PathVariable Long terrainId,

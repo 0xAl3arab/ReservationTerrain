@@ -224,10 +224,6 @@ const ComplexeListPage = () => {
                         <h2 className="text-2xl font-bold text-gray-900">
                             Terrains disponibles <span className="text-gray-400 font-normal text-lg ml-2">({filteredComplexes.length})</span>
                         </h2>
-                        <div className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold border border-green-200 flex items-center gap-2">
-                            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                            {activeTerrainsCount} Active Terrains System-wide
-                        </div>
                     </div>
                 </div>
 
