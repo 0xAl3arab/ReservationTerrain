@@ -13,11 +13,8 @@ import java.util.List;
 @Repository
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
 
-        // Find all reservations for a specific terrain on a specific date
         List<Reservation> findByTerrainIdAndDate(Long terrainId, LocalDate date);
 
-        // Check for overlapping reservations
-        // Two time ranges overlap if: start1 < end2 AND start2 < end1
         @Query("SELECT r FROM Reservation r WHERE r.terrain.id = :terrainId " +
                         "AND r.date = :date " +
                         "AND r.heureDebut < :heureFin " +
@@ -64,4 +61,5 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
                         @Param("maxDuration") Integer maxDuration);
 
         List<Reservation> findByClientId(Long clientId);
+
 }
