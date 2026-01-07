@@ -30,7 +30,8 @@ const Navbar = ({ user, onLogout }) => {
                     {/* Desktop Menu */}
                     <div className="hidden md:flex space-x-8 items-center">
                         <a href="/#complexes" className="text-gray-600 hover:text-[#0B2CFF] font-medium transition-colors">Découvrir les terrains</a>
-                        <a href="#" className="text-gray-600 hover:text-[#0B2CFF] font-medium transition-colors">Comment ça marche ?</a>
+                        <a href="/join-us" className="text-gray-600 hover:text-[#0B2CFF] font-medium transition-colors">Rejoignez-nous</a>
+                        <a href="/rules" className="text-gray-600 hover:text-[#0B2CFF] font-medium transition-colors">Règlement / Conditions</a>
                         {user && (
                             <a href="#" className="text-gray-600 hover:text-[#0B2CFF] font-medium transition-colors">Mon compte</a>
                         )}
@@ -168,7 +169,8 @@ const Navbar = ({ user, onLogout }) => {
             {mobileMenuOpen && (
                 <div className="md:hidden bg-white border-t border-gray-100 px-4 pt-2 pb-4 space-y-2 shadow-lg">
                     <a href="/#complexes" className="block text-gray-600 font-medium py-2">Découvrir les terrains</a>
-                    <a href="#" className="block text-gray-600 font-medium py-2">Comment ça marche ?</a>
+                    <a href="/join-us" className="block text-gray-600 font-medium py-2">Rejoignez-nous</a>
+                    <a href="/rules" className="block text-gray-600 font-medium py-2">Règlement / Conditions</a>
                     {user ? (
                         <>
                             <div className="border-t border-gray-100 my-2 pt-2">

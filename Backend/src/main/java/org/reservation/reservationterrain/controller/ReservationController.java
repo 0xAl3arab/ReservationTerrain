@@ -60,6 +60,33 @@ public class ReservationController {
         }
     }
 
+    @GetMapping("/my-reservations")
+    public ResponseEntity<List<ReservationResponse>> getMyReservations(@AuthenticationPrincipal Jwt jwt) {
+        String keycloakId = jwt.getSubject();
+        List<ReservationResponse> reservations = reservationService.getReservationsByKeycloakId(keycloakId);
+        return ResponseEntity.ok(reservations);
+    }
+
+    @PostMapping("/reservations/{id}/cancel")
+    public ResponseEntity<?> cancelReservation(
+            @PathVariable Long id,
+            @AuthenticationPrincipal Jwt jwt) {
+        try {
+            String keycloakId = jwt.getSubject();
+            reservationService.cancelReservation(id, keycloakId);
+            return ResponseEntity.ok().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
+        } catch (SecurityException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorResponse(e.getMessage()));
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResponse("Une erreur inattendue s'est produite"));
+        }
+    }
+
     @GetMapping("/terrains/{terrainId}/reservations")
     public ResponseEntity<List<ReservationResponse>> getTerrainReservations(
             @PathVariable Long terrainId,
