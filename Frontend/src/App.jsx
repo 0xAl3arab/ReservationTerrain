@@ -11,6 +11,8 @@ import AdminLoginPage from "./pages/Admin/AdminLoginPage.jsx";
 import AdminDashboard from "./pages/Admin/AdminDashboard.jsx";
 import AdminComplexesPage from "./pages/Admin/AdminComplexesPage.jsx";
 import AdminReservationsPage from "./pages/Admin/AdminReservationsPage.jsx";
+import JoinUsPage from "./pages/Client/JoinUsPage.jsx";
+import RulesPage from "./pages/Client/RulesPage.jsx";
 
 function App() {
     return (
@@ -29,6 +31,8 @@ function App() {
                 <Route path="/admin/dashboard" element={<AdminDashboard />} />
                 <Route path="/admin/complexes" element={<AdminComplexesPage />} />
                 <Route path="/admin/reservations" element={<AdminReservationsPage />} />
+                <Route path="/join-us" element={<JoinUsPage />} />
+                <Route path="/rules" element={<RulesPage />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
         </BrowserRouter>
