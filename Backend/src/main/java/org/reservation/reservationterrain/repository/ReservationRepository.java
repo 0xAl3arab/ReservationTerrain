@@ -62,4 +62,13 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
                         @Param("status") String status,
                         @Param("minDuration") Integer minDuration,
                         @Param("maxDuration") Integer maxDuration);
+
+        long countByTerrain_Complexe_Id(Long complexId);
+
+        long countByTerrain_Complexe_IdAndStatus(Long complexId, String status);
+
+        List<Reservation> findByTerrain_Complexe_IdAndStatus(Long complexId, String status);
+
+        // Find top 3 recent reservations for complex
+        List<Reservation> findTop3ByTerrain_Complexe_IdOrderByDateDescHeureDebutDesc(Long complexId);
 }

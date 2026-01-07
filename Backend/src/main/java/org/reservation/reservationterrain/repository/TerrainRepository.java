@@ -11,5 +11,7 @@ public interface TerrainRepository extends JpaRepository<Terrain, Long> {
 
     List<Terrain> findByComplexe_Id(Long complexeId);
 
+    long countByComplexe_IdAndStatus(Long complexeId, String status);
+
     long countByStatus(String status);
 }

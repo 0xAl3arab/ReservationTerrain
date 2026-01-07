@@ -42,8 +42,7 @@ public class ClientLoginService {
                     tokenUrl,
                     HttpMethod.POST,
                     entity,
-                    TokenResponse.class
-            );
+                    TokenResponse.class);
 
             return response.getBody();
         } catch (Exception e) {

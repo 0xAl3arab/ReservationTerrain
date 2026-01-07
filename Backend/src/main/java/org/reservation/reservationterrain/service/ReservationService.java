@@ -23,27 +23,66 @@ public class ReservationService {
         private final ReservationRepository reservationRepository;
         private final TerrainRepository terrainRepository;
         private final ClientRepository clientRepository;
+        private final ClientService clientService;
 
         public ReservationService(
                         ReservationRepository reservationRepository,
                         TerrainRepository terrainRepository,
-                        ClientRepository clientRepository) {
+                        ClientRepository clientRepository,
+                        ClientService clientService) {
                 this.reservationRepository = reservationRepository;
                 this.terrainRepository = terrainRepository;
                 this.clientRepository = clientRepository;
+                this.clientService = clientService;
         }
 
         @Transactional
-        public ReservationResponse createReservation(ReservationRequest request, String keycloakId) {
+        public ReservationResponse createReservation(ReservationRequest request, String keycloakId, String email,
+                        String nom, String prenom) {
                 // 1. Validate terrain exists
                 Terrain terrain = terrainRepository.findById(request.getTerrainId())
                                 .orElseThrow(
                                                 () -> new IllegalArgumentException("Terrain non trouvé avec l'ID: "
                                                                 + request.getTerrainId()));
 
-                // 2. Validate client exists
-                Client client = clientRepository.findByKeycloakId(keycloakId)
-                                .orElseThrow(() -> new IllegalArgumentException("Client non trouvé"));
+                // 2. Validate client exists or create if missing (Lazy Creation)
+                final String finalKeycloakId;
+                if (keycloakId == null) {
+                        try {
+                                finalKeycloakId = clientService.getKeycloakIdByEmail(email);
+                                System.out.println("DEBUG: Fetched missing Keycloak ID from API: " + finalKeycloakId);
+                        } catch (Exception e) {
+                                throw new IllegalArgumentException(
+                                                "Impossible de récupérer l'ID utilisateur: " + e.getMessage());
+                        }
+                } else {
+                        finalKeycloakId = keycloakId;
+                }
+
+                Client client = clientRepository.findByKeycloakId(finalKeycloakId)
+                                .orElseGet(() -> {
+                                        // Try to find by email first (migration case)
+                                        return clientRepository.findByEmail(email)
+                                                        .map(existingClient -> {
+                                                                existingClient.setKeycloakId(finalKeycloakId);
+                                                                return clientRepository.save(existingClient);
+                                                        })
+                                                        .orElseGet(() -> {
+                                                                // Create new client
+                                                                Client newClient = new Client();
+                                                                newClient.setKeycloakId(finalKeycloakId);
+                                                                // Handle potential null email from JWT
+                                                                newClient.setEmail(email != null ? email
+                                                                                : "no-email-" + finalKeycloakId
+                                                                                                + "@placeholder.com");
+
+                                                                newClient.setNom(nom != null && !nom.isEmpty() ? nom
+                                                                                : "Inconnu");
+                                                                newClient.setPrenom(prenom != null ? prenom : "");
+                                                                newClient.setRole("CLIENT");
+                                                                return clientRepository.save(newClient);
+                                                        });
+                                });
 
                 // 3. Validate time range
                 if (request.getHeureDebut().isAfter(request.getHeureFin()) ||
