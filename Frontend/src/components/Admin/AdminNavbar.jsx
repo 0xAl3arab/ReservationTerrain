@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 function AdminNavbar() {
     const navigate = useNavigate();
     const location = useLocation();
-    const adminEmail = "admin@weplay.com"; // In a real app, get this from context or token
+
 
     const handleLogout = () => {
         localStorage.removeItem("admin_access_token");
