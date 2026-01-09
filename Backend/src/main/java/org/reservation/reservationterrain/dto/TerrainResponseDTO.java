@@ -13,6 +13,7 @@ public class TerrainResponseDTO {
     private String status;
     private int heureOuverture;
     private int heureFermeture;
+    private int dureeCreneau;
 
     public TerrainResponseDTO() {
     }

@@ -95,6 +95,23 @@ public class ComplexeService {
             ownerSummary.setNumTele(c.getOwner().getNumTele());
             dto.setOwner(ownerSummary);
         }
+
+        if (c.getTerrains() != null) {
+            List<org.reservation.reservationterrain.dto.TerrainResponseDTO> terrainDTOs = c.getTerrains().stream()
+                .map(t -> {
+                    org.reservation.reservationterrain.dto.TerrainResponseDTO tDto = new org.reservation.reservationterrain.dto.TerrainResponseDTO();
+                    tDto.setId(t.getId());
+                    tDto.setNom(t.getNom());
+                    tDto.setPrixTerrain(t.getPrixTerrain());
+                    tDto.setStatus(t.getStatus());
+                    tDto.setHeureOuverture(t.getHeureOuverture());
+                    tDto.setHeureFermeture(t.getHeureFermeture());
+                    tDto.setDureeCreneau(t.getDureeCreneau());
+                    return tDto;
+                })
+                .collect(Collectors.toList());
+            dto.setTerrains(terrainDTOs);
+        }
         return dto;
     }
 }

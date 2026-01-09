@@ -9,6 +9,7 @@ public class ComplexeResponse {
     private String ville;
     private String adress;
     private OwnerSummary owner;
+    private java.util.List<TerrainResponseDTO> terrains;
 
     @Data
     public static class OwnerSummary {

@@ -13,6 +13,7 @@ import AdminComplexesPage from "./pages/Admin/AdminComplexesPage.jsx";
 import AdminReservationsPage from "./pages/Admin/AdminReservationsPage.jsx";
 import JoinUsPage from "./pages/Client/JoinUsPage.jsx";
 import RulesPage from "./pages/Client/RulesPage.jsx";
+import FindTeamPage from "./pages/Client/FindTeamPage.jsx";
 
 function App() {
     return (
@@ -33,6 +34,7 @@ function App() {
                 <Route path="/admin/reservations" element={<AdminReservationsPage />} />
                 <Route path="/join-us" element={<JoinUsPage />} />
                 <Route path="/rules" element={<RulesPage />} />
+                <Route path="/find-team" element={<FindTeamPage />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
         </BrowserRouter>

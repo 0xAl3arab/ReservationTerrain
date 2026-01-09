@@ -25,6 +25,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/complexes/**").permitAll()
                         .requestMatchers("/auth/client/**").permitAll()
+                        .requestMatchers("/annonces/**").permitAll() // Allow public access to announcements
                         .requestMatchers("/admin/login").permitAll() // Allow Admin Login
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
