@@ -13,6 +13,12 @@ import AdminComplexesPage from "./pages/Admin/AdminComplexesPage.jsx";
 import AdminReservationsPage from "./pages/Admin/AdminReservationsPage.jsx";
 import JoinUsPage from "./pages/Client/JoinUsPage.jsx";
 import RulesPage from "./pages/Client/RulesPage.jsx";
+import OwnerLoginPage from "./pages/Owner/OwnerLoginPage.jsx";
+import OwnerDashboard from "./pages/Owner/OwnerDashboard.jsx";
+import OwnerProfilePage from "./pages/Owner/OwnerProfilePage.jsx";
+import OwnerReservationsPage from "./pages/Owner/OwnerReservationsPage.jsx";
+import OwnerTerrainsPage from "./pages/Owner/OwnerTerrainsPage.jsx";
+import OwnerComplexPage from "./pages/Owner/OwnerComplexPage.jsx";
 
 function App() {
     return (
@@ -27,6 +33,14 @@ function App() {
                 <Route path="/complexes/:id/terrains" element={<TerrainDetailsPage />} />
                 <Route path="/paiement" element={<PaiementPage />} />
                 <Route path="/confirmation" element={<ConfirmationPage />} />
+
+                {/* ROUTES OWNER */}
+                <Route path="/owner/login" element={<OwnerLoginPage />} />
+                <Route path="/owner/dashboard" element={<OwnerDashboard />} />
+                <Route path="/owner/profile" element={<OwnerProfilePage />} />
+                <Route path="/owner/reservations" element={<OwnerReservationsPage />} />
+                <Route path="/owner/terrains" element={<OwnerTerrainsPage />} />
+                <Route path="/owner/complexe" element={<OwnerComplexPage />} />
 
                 {/* ROUTES ADMIN */}
                 <Route path="/admin/login" element={<AdminLoginPage />} />

@@ -10,6 +10,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -37,6 +38,33 @@ public class OwnerController {
         return ResponseEntity.ok("Profil mis à jour");
     }
 
+    @PutMapping("/change-password")
+    public ResponseEntity<String> changePassword(@AuthenticationPrincipal Jwt jwt,
+            @RequestBody PasswordChangeRequest request) {
+        try {
+            String email = jwt.getClaimAsString("email");
+            System.out.println("DEBUG: change-password request for: " + email);
+            System.out.println("DEBUG: JWT Claims: " + jwt.getClaims());
+            ownerService.changePassword(email, request);
+            return ResponseEntity.ok("Mot de passe mis à jour avec succès");
+        } catch (Exception e) {
+            System.err.println("DEBUG: change-password controller error: " + e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/complexe")
+    public ResponseEntity<String> updateComplexe(@AuthenticationPrincipal Jwt jwt,
+            @RequestBody ComplexeDTO complexeDTO) {
+        try {
+            String email = jwt.getClaimAsString("email");
+            ownerService.updateOwnerComplexe(email, complexeDTO);
+            return ResponseEntity.ok("Informations du complexe mises à jour");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
     // --- TERRAINS ---
     @PostMapping("/terrains")
     public ResponseEntity<Terrain> addTerrain(@RequestBody TerrainDTO terrainDTO, @AuthenticationPrincipal Jwt jwt) {
@@ -59,9 +87,12 @@ public class OwnerController {
 
     // --- RÉSERVATIONS (Nouveau) ---
     @GetMapping("/reservations")
-    public ResponseEntity<List<ReservationDTO>> getReservations(@AuthenticationPrincipal Jwt jwt) {
+    public ResponseEntity<List<ReservationDTO>> getReservations(
+            @AuthenticationPrincipal Jwt jwt,
+            @RequestParam(required = false) Long terrainId,
+            @RequestParam(required = false) LocalDate date) {
         String email = jwt.getClaimAsString("email");
-        return ResponseEntity.ok(ownerService.getReservations(email));
+        return ResponseEntity.ok(ownerService.getReservations(email, terrainId, date));
     }
 
     @PutMapping("/reservations/{id}/validate")

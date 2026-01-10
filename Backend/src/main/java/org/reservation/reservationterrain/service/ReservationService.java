@@ -164,7 +164,7 @@ public class ReservationService {
                         String status,
                         Integer minDuration, Integer maxDuration) {
                 return reservationRepository.findReservationsByFilters(
-                                complexId, clientId, dateFrom, dateTo,
+                                complexId, null, clientId, dateFrom, dateTo,
                                 status,
                                 minDuration, maxDuration).stream()
                                 .map(this::toResponse)

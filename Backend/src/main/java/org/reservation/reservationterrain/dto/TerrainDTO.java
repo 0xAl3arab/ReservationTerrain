@@ -13,4 +13,5 @@ public class TerrainDTO {
     private Integer heureOuverture;
     private Integer heureFermeture;
     private Integer dureeCreneau;
+    private String image;
 }
