@@ -33,9 +33,7 @@ const Navbar = ({ user, onLogout }) => {
                         <a href="/find-team" className="text-gray-600 hover:text-[#0B2CFF] font-medium transition-colors">Trouver une équipe</a>
                         <a href="/join-us" className="text-gray-600 hover:text-[#0B2CFF] font-medium transition-colors">Rejoignez-nous</a>
                         <a href="/rules" className="text-gray-600 hover:text-[#0B2CFF] font-medium transition-colors">Règlement / Conditions</a>
-                        {user && (
-                            <a href="#" className="text-gray-600 hover:text-[#0B2CFF] font-medium transition-colors">Mon compte</a>
-                        )}
+
                     </div>
 
                     {/* Auth Buttons (Desktop) */}
