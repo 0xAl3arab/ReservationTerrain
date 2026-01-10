@@ -34,9 +34,9 @@ public class KeycloakConfig {
     public Keycloak keycloak() {
         return KeycloakBuilder.builder()
                 .serverUrl(serverUrl)
-                .realm(adminRealm)              // master
-                .clientId(clientId)             // admin-cli
-                .username(username)             // admin
+                .realm(adminRealm) // master
+                .clientId(clientId) // admin-cli
+                .username(username) // admin
                 .password(password)
                 .grantType(OAuth2Constants.PASSWORD)
                 .build();
@@ -44,6 +44,6 @@ public class KeycloakConfig {
 
     @Bean
     public String keycloakRealmName() {
-        return appRealm;                       // reservation-realm
+        return appRealm; // reservation-realm
     }
 }

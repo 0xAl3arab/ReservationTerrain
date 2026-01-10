@@ -30,9 +30,22 @@ public class ReservationController {
             @AuthenticationPrincipal Jwt jwt) {
         try {
             // Extract Keycloak ID from JWT token
-            String keycloakId = jwt.getSubject();
+            System.out.println("DEBUG JWT Claims: " + jwt.getClaims());
+            System.out.println("DEBUG JWT Subject: " + jwt.getSubject());
 
-            ReservationResponse response = reservationService.createReservation(request, keycloakId);
+            String keycloakId = jwt.getSubject();
+            String email = jwt.getClaimAsString("email");
+            String nom = jwt.getClaimAsString("family_name");
+            String prenom = jwt.getClaimAsString("given_name");
+
+            if (keycloakId == null && email == null) {
+                System.err.println("CRITICAL: Both Keycloak ID and Email are NULL!");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(new ErrorResponse("Authentication Token missing identity claims"));
+            }
+
+            ReservationResponse response = reservationService.createReservation(request, keycloakId, email, nom,
+                    prenom);
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (IllegalArgumentException e) {
             // Validation errors (terrain not found, invalid time range, etc.)

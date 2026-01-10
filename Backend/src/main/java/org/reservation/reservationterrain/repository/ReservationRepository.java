@@ -13,8 +13,13 @@ import java.util.List;
 @Repository
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
 
+        // Find all reservations for a specific terrain on a specific date
         List<Reservation> findByTerrainIdAndDate(Long terrainId, LocalDate date);
 
+        List<Reservation> findByClientId(Long clientId);
+
+        // Check for overlapping reservations
+        // Two time ranges overlap if: start1 < end2 AND start2 < end1
         @Query("SELECT r FROM Reservation r WHERE r.terrain.id = :terrainId " +
                         "AND r.date = :date " +
                         "AND r.heureDebut < :heureFin " +
@@ -45,6 +50,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
         @Query("SELECT r FROM Reservation r WHERE " +
                         "(:complexId IS NULL OR r.terrain.complexe.id = :complexId) AND " +
+                        "(:terrainId IS NULL OR r.terrain.id = :terrainId) AND " +
                         "(:clientId IS NULL OR r.client.id = :clientId) AND " +
                         "(:dateFrom IS NULL OR r.date >= :dateFrom) AND " +
                         "(:dateTo IS NULL OR r.date <= :dateTo) AND " +
@@ -53,6 +59,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
                         "(:maxDuration IS NULL OR r.duree <= :maxDuration)")
         List<Reservation> findReservationsByFilters(
                         @Param("complexId") Long complexId,
+                        @Param("terrainId") Long terrainId,
                         @Param("clientId") Long clientId,
                         @Param("dateFrom") LocalDate dateFrom,
                         @Param("dateTo") LocalDate dateTo,
@@ -60,6 +67,12 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
                         @Param("minDuration") Integer minDuration,
                         @Param("maxDuration") Integer maxDuration);
 
-        List<Reservation> findByClientId(Long clientId);
+        long countByTerrain_Complexe_Id(Long complexId);
 
+        long countByTerrain_Complexe_IdAndStatus(Long complexId, String status);
+
+        List<Reservation> findByTerrain_Complexe_IdAndStatus(Long complexId, String status);
+
+        // Find top 3 recent reservations for complex
+        List<Reservation> findTop3ByTerrain_Complexe_IdOrderByDateDescHeureDebutDesc(Long complexId);
 }

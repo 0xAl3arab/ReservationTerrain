@@ -21,6 +21,8 @@ public class Terrain {
     private int heureOuverture;
     private int heureFermeture;
     private int dureeCreneau;
+    @Column(length = 10000000)
+    private String image; // Base64 encoded image or URL
 
     public Terrain() {
     }

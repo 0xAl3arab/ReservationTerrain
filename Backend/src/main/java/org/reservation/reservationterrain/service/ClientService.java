@@ -48,6 +48,14 @@ public class ClientService {
                 .orElseThrow(() -> new RuntimeException("Client non trouvé"));
     }
 
+    public String getKeycloakIdByEmail(String email) {
+        var users = keycloak.realm(realm).users().search(email);
+        if (users.isEmpty()) {
+            throw new RuntimeException("User not found in Keycloak with email: " + email);
+        }
+        return users.get(0).getId();
+    }
+
     // Récupère le profil à partir du JWT
     public ClientResponseDTO getCurrentClientProfile(Jwt jwt) {
         String email = jwt.getClaimAsString("email");
