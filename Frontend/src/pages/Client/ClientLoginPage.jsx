@@ -109,7 +109,7 @@ function ClientLoginPage() {
                                 <input
                                     name="email"
                                     type="email"
-                                    placeholder="jean.dupont@example.com"
+                                    placeholder="exemple@email.com"
                                     value={form.email}
                                     onChange={handleChange}
                                     required
