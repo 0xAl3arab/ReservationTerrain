@@ -29,7 +29,7 @@ public class AnnonceService {
     public AnnonceDTO createAnnonce(AnnonceDTO dto) {
         Client client = clientRepository.findById(dto.getClientId())
                 .orElseThrow(() -> new RuntimeException("Client not found"));
-        
+
         Terrain terrain = terrainRepository.findById(dto.getTerrainId())
                 .orElseThrow(() -> new RuntimeException("Terrain not found"));
 
@@ -68,15 +68,16 @@ public class AnnonceService {
         dto.setId(annonce.getId());
         dto.setDate(annonce.getDate());
         dto.setNbrJoueur(annonce.getNbrJoueur());
-        
+
         dto.setClientId(annonce.getClient().getId());
         dto.setClientName(annonce.getClient().getNom() + " " + annonce.getClient().getPrenom());
-        
+        dto.setClientPhone(annonce.getClient().getNumTele());
+
         dto.setTerrainId(annonce.getTerrain().getId());
         dto.setTerrainName(annonce.getTerrain().getNom());
         dto.setComplexeName(annonce.getTerrain().getComplexe().getNom());
         dto.setVille(annonce.getTerrain().getComplexe().getVille());
-        
+
         return dto;
     }
 }

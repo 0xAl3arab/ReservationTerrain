@@ -179,7 +179,18 @@ const FindTeamPage = () => {
                                         Recherche : <span className="font-bold text-gray-900">{annonce.nbrJoueur} joueurs</span>
                                     </p>
                                 </div>
-                                <button className="w-full bg-gray-50 hover:bg-gray-100 text-[#0B2CFF] font-semibold py-3 rounded-xl transition-colors border border-gray-200">
+                                <button
+                                    onClick={() => {
+                                        if (annonce.clientPhone) {
+                                            // Remove spaces and non-numeric characters for the WhatsApp link
+                                            const cleanPhone = annonce.clientPhone.replace(/\D/g, '');
+                                            window.open(`https://wa.me/${cleanPhone}`, '_blank');
+                                        } else {
+                                            alert("Numéro de téléphone non disponible.");
+                                        }
+                                    }}
+                                    className="w-full bg-gray-50 hover:bg-gray-100 text-[#0B2CFF] font-semibold py-3 rounded-xl transition-colors border border-gray-200"
+                                >
                                     Contacter
                                 </button>
                             </div>

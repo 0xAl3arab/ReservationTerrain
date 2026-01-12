@@ -61,7 +61,10 @@ const JoinUsPage = () => {
                                 <p className="text-gray-300 mb-8 relative z-10">
                                     Rejoignez le réseau WePlay dès aujourd'hui et transformez la gestion de votre complexe.
                                 </p>
-                                <button className="w-full bg-[#0B2CFF] hover:bg-[#001B87] text-white font-bold py-4 px-6 rounded-xl shadow-lg shadow-blue-900/50 transition-all duration-300 flex items-center justify-center group relative z-10">
+                                <button
+                                    onClick={() => window.open('https://wa.me/212700611644', '_blank')}
+                                    className="w-full bg-[#0B2CFF] hover:bg-[#001B87] text-white font-bold py-4 px-6 rounded-xl shadow-lg shadow-blue-900/50 transition-all duration-300 flex items-center justify-center group relative z-10"
+                                >
                                     <span>Devenir partenaire</span>
                                     <svg className="w-5 h-5 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
