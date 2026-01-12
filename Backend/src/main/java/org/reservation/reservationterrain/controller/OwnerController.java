@@ -114,4 +114,9 @@ public class OwnerController {
         String email = jwt.getClaimAsString("email");
         return ResponseEntity.ok(ownerService.getDashboardStats(email));
     }
+
+    @GetMapping
+    public ResponseEntity<List<OwnerProfileDTO>> getAllOwners() {
+        return ResponseEntity.ok(ownerService.getAllOwners());
+    }
 }

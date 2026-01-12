@@ -44,11 +44,16 @@ public class ComplexeService {
         complexe.setVille(request.getVille());
         complexe.setAdress(request.getAdress());
 
-        if (request.getOwnerId() != null) {
-            org.reservation.reservationterrain.model.Owner owner = ownerRepository.findById(request.getOwnerId())
-                    .orElseThrow(() -> new IllegalArgumentException("Owner non trouvé"));
-            complexe.setOwner(owner);
+        org.reservation.reservationterrain.model.Owner owner = ownerRepository.findById(request.getOwnerId())
+                .orElseThrow(() -> new IllegalArgumentException("Owner non trouvé"));
+
+        // Check if owner already has a complex
+        if (complexeRepository.findFirstByOwner(owner).isPresent()) {
+            throw new IllegalArgumentException("Cet owner gère déjà un complexe.");
         }
+
+        complexe.setOwner(owner);
+        complexe.setOwner(owner);
 
         Complexe saved = complexeRepository.save(complexe);
         return mapToResponse(saved);
@@ -65,6 +70,15 @@ public class ComplexeService {
         if (request.getOwnerId() != null) {
             org.reservation.reservationterrain.model.Owner owner = ownerRepository.findById(request.getOwnerId())
                     .orElseThrow(() -> new IllegalArgumentException("Owner non trouvé"));
+
+            // Check if owner already has a complex AND it's not the current one
+            complexeRepository.findFirstByOwner(owner).ifPresent(existingComplexe -> {
+                if (existingComplexe.getId() != id) {
+                    throw new IllegalArgumentException(
+                            "Cet owner gère déjà un complexe (" + existingComplexe.getNom() + ")");
+                }
+            });
+
             complexe.setOwner(owner);
         }
 
@@ -98,18 +112,18 @@ public class ComplexeService {
 
         if (c.getTerrains() != null) {
             List<org.reservation.reservationterrain.dto.TerrainResponseDTO> terrainDTOs = c.getTerrains().stream()
-                .map(t -> {
-                    org.reservation.reservationterrain.dto.TerrainResponseDTO tDto = new org.reservation.reservationterrain.dto.TerrainResponseDTO();
-                    tDto.setId(t.getId());
-                    tDto.setNom(t.getNom());
-                    tDto.setPrixTerrain(t.getPrixTerrain());
-                    tDto.setStatus(t.getStatus());
-                    tDto.setHeureOuverture(t.getHeureOuverture());
-                    tDto.setHeureFermeture(t.getHeureFermeture());
-                    tDto.setDureeCreneau(t.getDureeCreneau());
-                    return tDto;
-                })
-                .collect(Collectors.toList());
+                    .map(t -> {
+                        org.reservation.reservationterrain.dto.TerrainResponseDTO tDto = new org.reservation.reservationterrain.dto.TerrainResponseDTO();
+                        tDto.setId(t.getId());
+                        tDto.setNom(t.getNom());
+                        tDto.setPrixTerrain(t.getPrixTerrain());
+                        tDto.setStatus(t.getStatus());
+                        tDto.setHeureOuverture(t.getHeureOuverture());
+                        tDto.setHeureFermeture(t.getHeureFermeture());
+                        tDto.setDureeCreneau(t.getDureeCreneau());
+                        return tDto;
+                    })
+                    .collect(Collectors.toList());
             dto.setTerrains(terrainDTOs);
         }
         return dto;

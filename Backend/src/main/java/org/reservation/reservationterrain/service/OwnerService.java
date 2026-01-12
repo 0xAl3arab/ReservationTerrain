@@ -118,9 +118,10 @@ public class OwnerService {
                 Owner owner = ownerRepository.findByEmail(email)
                                 .orElseThrow(() -> new RuntimeException("Owner not found with email: " + email));
 
-                Optional<Complexe> complexeOpt = complexeRepository.findByOwner(owner);
+                Optional<Complexe> complexeOpt = complexeRepository.findFirstByOwner(owner);
 
                 return OwnerProfileDTO.builder()
+                                .id(owner.getId())
                                 .nom(owner.getNom())
                                 .prenom(owner.getPrenom())
                                 .email(owner.getEmail())
@@ -128,6 +129,7 @@ public class OwnerService {
                                 .nomComplexe(complexeOpt.map(Complexe::getNom).orElse("Aucun complexe associé"))
                                 .ville(complexeOpt.map(Complexe::getVille).orElse(""))
                                 .adresse(complexeOpt.map(Complexe::getAdress).orElse(""))
+                                .hasComplexe(complexeOpt.isPresent())
                                 .build();
         }
 
@@ -135,7 +137,7 @@ public class OwnerService {
                 Owner owner = ownerRepository.findByEmail(ownerEmail)
                                 .orElseThrow(() -> new RuntimeException("Owner not found"));
 
-                Complexe complexe = complexeRepository.findByOwner(owner).orElse(null);
+                Complexe complexe = complexeRepository.findFirstByOwner(owner).orElse(null);
                 if (complexe == null) {
                         complexe = new Complexe();
                         complexe.setOwner(owner);
@@ -162,7 +164,7 @@ public class OwnerService {
                 Owner owner = ownerRepository.findByEmail(ownerEmail)
                                 .orElseThrow(() -> new RuntimeException("Owner not found"));
 
-                Complexe complexe = complexeRepository.findByOwner(owner).orElse(null);
+                Complexe complexe = complexeRepository.findFirstByOwner(owner).orElse(null);
                 if (complexe == null)
                         return java.util.Collections.emptyList();
 
@@ -198,7 +200,7 @@ public class OwnerService {
                 Owner owner = ownerRepository.findByEmail(email)
                                 .orElseThrow(() -> new RuntimeException("Owner not found"));
 
-                Complexe complexe = complexeRepository.findByOwner(owner).orElse(null);
+                Complexe complexe = complexeRepository.findFirstByOwner(owner).orElse(null);
 
                 if (complexe == null) {
                         complexe = new Complexe();
@@ -300,7 +302,7 @@ public class OwnerService {
                 Owner owner = ownerRepository.findByEmail(ownerEmail)
                                 .orElseThrow(() -> new RuntimeException("Owner not found"));
 
-                Complexe complexe = complexeRepository.findByOwner(owner)
+                Complexe complexe = complexeRepository.findFirstByOwner(owner)
                                 .orElseThrow(() -> new RuntimeException("Complexe not found for owner: " + ownerEmail));
 
                 Terrain terrain = terrainRepository.findById(terrainId)
@@ -336,7 +338,7 @@ public class OwnerService {
                 Owner owner = ownerRepository.findByEmail(email)
                                 .orElseThrow(() -> new RuntimeException("Owner not found"));
 
-                Complexe complexe = complexeRepository.findByOwner(owner).orElse(null);
+                Complexe complexe = complexeRepository.findFirstByOwner(owner).orElse(null);
                 if (complexe == null)
                         return java.util.Collections.emptyList();
 
@@ -373,7 +375,7 @@ public class OwnerService {
                 Owner owner = ownerRepository.findByEmail(email)
                                 .orElseThrow(() -> new RuntimeException("Owner not found"));
 
-                Complexe complexe = complexeRepository.findByOwner(owner).orElse(null);
+                Complexe complexe = complexeRepository.findFirstByOwner(owner).orElse(null);
                 if (complexe == null)
                         throw new RuntimeException("Unauthorized: No complex associated with your account.");
 
@@ -394,7 +396,7 @@ public class OwnerService {
                 Owner owner = ownerRepository.findByEmail(email)
                                 .orElseThrow(() -> new RuntimeException("Owner not found"));
 
-                Complexe complexe = complexeRepository.findByOwner(owner).orElse(null);
+                Complexe complexe = complexeRepository.findFirstByOwner(owner).orElse(null);
                 if (complexe == null) {
                         return OwnerDashboardStatsDTO.builder()
                                         .totalReservations(0)
@@ -460,5 +462,25 @@ public class OwnerService {
                                 .totalRevenue(totalRevenue)
                                 .recentReservations(recentReservations)
                                 .build();
+        }
+
+        public List<OwnerProfileDTO> getAllOwners() {
+                return ownerRepository.findAll().stream()
+                                .map(owner -> {
+                                        Optional<Complexe> complexeOpt = complexeRepository.findFirstByOwner(owner);
+                                        return OwnerProfileDTO.builder()
+                                                        .id(owner.getId())
+                                                        .nom(owner.getNom())
+                                                        .prenom(owner.getPrenom())
+                                                        .email(owner.getEmail())
+                                                        .numTele(owner.getNumTele())
+                                                        .nomComplexe(complexeOpt.map(Complexe::getNom)
+                                                                        .orElse("Aucun complexe associé"))
+                                                        .ville(complexeOpt.map(Complexe::getVille).orElse(""))
+                                                        .adresse(complexeOpt.map(Complexe::getAdress).orElse(""))
+                                                        .hasComplexe(complexeOpt.isPresent())
+                                                        .build();
+                                })
+                                .collect(Collectors.toList());
         }
 }

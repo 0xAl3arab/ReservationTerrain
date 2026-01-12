@@ -6,6 +6,7 @@ import lombok.Data;
 @Data
 @Builder
 public class OwnerProfileDTO {
+    private Long id;
     private String nom;
     private String prenom;
     private String email;
@@ -13,4 +14,5 @@ public class OwnerProfileDTO {
     private String nomComplexe;
     private String ville;
     private String adresse;
+    private boolean hasComplexe;
 }

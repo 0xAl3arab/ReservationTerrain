@@ -286,8 +286,13 @@ function AdminComplexesPage() {
                                     >
                                         <option value="">Select an Owner</option>
                                         {owners.map(owner => (
-                                            <option key={owner.id} value={owner.id}>
+                                            <option
+                                                key={owner.id}
+                                                value={owner.id}
+                                                disabled={owner.hasComplexe && owner.id !== currentComplex?.owner?.id}
+                                            >
                                                 {owner.prenom} {owner.nom} ({owner.email})
+                                                {owner.hasComplexe && owner.id !== currentComplex?.owner?.id ? " - Taken" : ""}
                                             </option>
                                         ))}
                                     </select>
