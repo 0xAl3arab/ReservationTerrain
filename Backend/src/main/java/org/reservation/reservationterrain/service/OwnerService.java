@@ -149,11 +149,21 @@ public class OwnerService {
 
                 Terrain terrain = new Terrain();
                 terrain.setNom(terrainDTO.getNom());
-                terrain.setPrixTerrain(terrainDTO.getPrixTerrain());
+
+                // Fix: Handle null prixTerrain
+                if (terrainDTO.getPrixTerrain() != null) {
+                        terrain.setPrixTerrain(String.valueOf(terrainDTO.getPrixTerrain()));
+                } else {
+                        terrain.setPrixTerrain("0.0");
+                }
+
                 terrain.setStatus(terrainDTO.getStatus() != null ? terrainDTO.getStatus() : "OUVERT");
-                terrain.setHeureOuverture(terrainDTO.getHeureOuverture());
-                terrain.setHeureFermeture(terrainDTO.getHeureFermeture());
-                terrain.setDureeCreneau(terrainDTO.getDureeCreneau());
+
+                // Fix: Provide default values to avoid NullPointerException during unboxing
+                terrain.setHeureOuverture(terrainDTO.getHeureOuverture() != null ? terrainDTO.getHeureOuverture() : 8);
+                terrain.setHeureFermeture(terrainDTO.getHeureFermeture() != null ? terrainDTO.getHeureFermeture() : 22);
+                terrain.setDureeCreneau(terrainDTO.getDureeCreneau() != null ? terrainDTO.getDureeCreneau() : 60);
+
                 terrain.setImage(terrainDTO.getImage());
                 terrain.setComplexe(complexe);
 
@@ -172,7 +182,7 @@ public class OwnerService {
                                 .map(t -> TerrainDTO.builder()
                                                 .id(t.getId())
                                                 .nom(t.getNom())
-                                                .prixTerrain(t.getPrixTerrain())
+                                                .prixTerrain(Double.valueOf(t.getPrixTerrain()))
                                                 .status(t.getStatus())
                                                 .heureOuverture(t.getHeureOuverture())
                                                 .heureFermeture(t.getHeureFermeture())
@@ -317,7 +327,7 @@ public class OwnerService {
                 if (terrainDTO.getNom() != null)
                         terrain.setNom(terrainDTO.getNom());
                 if (terrainDTO.getPrixTerrain() != null)
-                        terrain.setPrixTerrain(terrainDTO.getPrixTerrain());
+                        terrain.setPrixTerrain(String.valueOf(terrainDTO.getPrixTerrain()));
                 if (terrainDTO.getHeureOuverture() != null)
                         terrain.setHeureOuverture(terrainDTO.getHeureOuverture());
                 if (terrainDTO.getHeureFermeture() != null)

@@ -8,7 +8,7 @@ import lombok.Data;
 public class TerrainDTO {
     private Long id;
     private String nom;
-    private String prixTerrain;
+    private Double prixTerrain;
     private String status;
     private Integer heureOuverture;
     private Integer heureFermeture;
