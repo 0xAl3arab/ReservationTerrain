@@ -115,6 +115,16 @@ public class OwnerController {
         return ResponseEntity.ok(ownerService.getDashboardStats(email));
     }
 
+    @PostMapping("/create")
+    public ResponseEntity<Owner> createOwner(@RequestBody OwnerRegistrationDTO request) {
+        try {
+            Owner owner = ownerService.createOwner(request);
+            return ResponseEntity.ok(owner);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
+
     @GetMapping
     public ResponseEntity<List<OwnerProfileDTO>> getAllOwners() {
         return ResponseEntity.ok(ownerService.getAllOwners());

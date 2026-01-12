@@ -40,6 +40,7 @@ public class SecurityConfig {
                         // 2. TA PARTIE : ESPACE OWNER
                         // ==========================================
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/owners").authenticated()
+                        .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/owners/create").authenticated()
                         .requestMatchers("/api/owners/**").hasAnyRole("OWNER", "ADMIN")
 
                         // ==========================================
