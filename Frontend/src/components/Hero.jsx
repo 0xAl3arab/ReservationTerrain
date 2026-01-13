@@ -75,9 +75,12 @@ const Hero = ({ user }) => {
                             >
                                 Réserver un terrain
                             </a>
-                            <button className="bg-blue-600/50 backdrop-blur-sm border border-blue-400/30 text-white font-semibold px-8 py-4 rounded-xl hover:bg-blue-600/70 transition-all">
+                            <a
+                                href="/find-team"
+                                className="bg-blue-600/50 backdrop-blur-sm border border-blue-400/30 text-white font-semibold px-8 py-4 rounded-xl hover:bg-blue-600/70 transition-all flex items-center justify-center"
+                            >
                                 Rejoindre une équipe
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
