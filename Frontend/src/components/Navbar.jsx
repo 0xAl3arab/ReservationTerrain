@@ -1,11 +1,67 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
-const Navbar = ({ user, onLogout }) => {
+const Navbar = ({ user: propUser, onLogout: propLogout }) => {
     const navigate = useNavigate();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+    const [internalUser, setInternalUser] = useState(null);
     const dropdownRef = useRef(null);
+
+    // Use prop user if provided, otherwise use internal state
+    const user = propUser || internalUser;
+
+    // Fetch user profile if not provided as prop
+    useEffect(() => {
+        if (!propUser) {
+            const token = localStorage.getItem("kc_access_token");
+            if (token) {
+                // 1. Immediate UI update from Token
+                try {
+                    const payload = JSON.parse(atob(token.split('.')[1]));
+                    setInternalUser({
+                        firstName: payload.given_name || "User",
+                        lastName: payload.family_name || "",
+                        email: payload.email
+                    });
+                } catch (e) {
+                    console.error("Error decoding token:", e);
+                }
+
+                // 2. Background fetch for fresh data
+                fetch("http://localhost:8080/client/profile", {
+                    headers: {
+                        "Authorization": `Bearer ${token}`
+                    }
+                })
+                    .then(res => res.ok ? res.json() : null)
+                    .then(data => {
+                        if (data) {
+                            setInternalUser({
+                                firstName: data.prenom,
+                                lastName: data.nom,
+                                email: data.email,
+                                id: data.id
+                            });
+                        }
+                    })
+                    .catch(err => console.error("Background profile fetch failed:", err));
+            } else {
+                setInternalUser(null);
+            }
+        }
+    }, [propUser]);
+
+    const handleLogout = () => {
+        if (propLogout) {
+            propLogout();
+        } else {
+            localStorage.removeItem("kc_access_token");
+            localStorage.removeItem("kc_refresh_token");
+            setInternalUser(null);
+            window.location.href = "/login";
+        }
+    };
 
     // Close dropdown when clicking outside
     useEffect(() => {
@@ -112,7 +168,7 @@ const Navbar = ({ user, onLogout }) => {
                                             <button
                                                 onClick={() => {
                                                     setProfileDropdownOpen(false);
-                                                    onLogout();
+                                                    handleLogout();
                                                 }}
                                                 className="w-full px-4 py-2.5 text-left hover:bg-red-50 transition-colors flex items-center space-x-3 group"
                                             >
@@ -196,7 +252,7 @@ const Navbar = ({ user, onLogout }) => {
                                     🕒 Historique
                                 </button>
                                 <button
-                                    onClick={onLogout}
+                                    onClick={handleLogout}
                                     className="block w-full text-left text-red-500 hover:bg-red-50 font-medium py-2 px-2 rounded transition-colors"
                                 >
                                     🚪 Déconnexion
