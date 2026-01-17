@@ -2,26 +2,6 @@
 
 WePlay is a  web application designed for managing and reserving sports venues (terrains). It provides a seamless experience for clients to book pitches, owners to manage their complexes, and administrators to oversee the entire platform.
 
-## 🚀 Features
-
-### 👤 Client Side
-- **Complex & Terrain Browsing**: View available sports complexes and their specific terrains.
-- **Reservation System**: Book terrains for specific dates and times.
-- **History & Profile**: Track past reservations and manage personal information.
-- **Payment Integration**: Streamlined payment flow for secure bookings.
-
-### 🏢 Owner Side
-- **Complex Management**: Manage one or multiple sports complexes.
-- **Terrain Control**: Add, update, or remove terrains.
-- **Reservation Monitoring**: View and manage incoming bookings for their venues.
-- **Dashboard**: Real-time overview of activities.
-
-### 🛡️ Admin Side
-- **Platform Oversight**: General dashboard for platform statistics.
-- **User Management**: Oversee clients and owners.
-- **Complex Validation**: Approve and manage listed complexes.
-
-## 🛠️ Technology Stack
 
 ### Backend
 - **Framework**: Spring Boot 3.5.7
@@ -41,18 +21,7 @@ WePlay is a  web application designed for managing and reserving sports venues (
 - **Authentication**: Keycloak-js & JWT Decode
 - **API Client**: Axios
 
-## 📁 Project Structure
 
-```text
-ReservationTerrain/
-├── Backend/          # Spring Boot Application
-│   ├── src/          # Java source files
-│   └── pom.xml       # Maven dependencies
-├── Frontend/         # React Application
-│   ├── src/          # React components and pages
-│   └── package.json  # NPM dependencies
-└── README.md         # Project documentation
-```
 
 ## ⚙️ Setup & Installation
 
@@ -61,6 +30,7 @@ ReservationTerrain/
 - **Node.js** (LTS version)
 - **PostgreSQL**
 - **Keycloak** server instance
+- You need to configure keycloack to work with the project
 
 ### Backend Setup
 1. Navigate to the `Backend` directory.
@@ -81,6 +51,5 @@ ReservationTerrain/
    npm run dev
    ```
 
-## 🤝 Contributing
-Feel free to fork this project and submit pull requests for any features or bug fixes.
+
 
