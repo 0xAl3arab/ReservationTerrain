@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import photo from "./../../src/assets/terrain.jpeg"
+import photo from "../assets/Terrain.jpeg"
 
 const ComplexCard = ({ complex }) => {
     const navigate = useNavigate();
@@ -59,10 +59,14 @@ const ComplexCard = ({ complex }) => {
                 </div>
 
                 <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
-                    <div className="flex flex-col">
-                        <span className="text-xs text-gray-500 font-medium">À partir de</span>
-                        <span className="text-lg font-bold text-[#0B2CFF]">{minPrice} MAD <span className="text-sm font-normal text-gray-400">/ heure</span></span>
-                    </div>
+                    {minPrice !== null ? (
+                        <div className="flex flex-col">
+                            <span className="text-xs text-gray-500 font-medium">À partir de</span>
+                            <span className="text-lg font-bold text-[#0B2CFF]">{minPrice} MAD <span className="text-sm font-normal text-gray-400">/ heure</span></span>
+                        </div>
+                    ) : (
+                        <span className="text-sm text-gray-400 font-medium">Aucun terrain disponible</span>
+                    )}
                     <button
                         onClick={handleViewTerrains}
                         className="bg-[#0B2CFF] text-white px-6 py-2.5 rounded-lg font-semibold text-sm hover:bg-[#001B87] transition-colors shadow-md shadow-blue-200"

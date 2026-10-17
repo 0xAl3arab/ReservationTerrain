@@ -2,7 +2,7 @@ import { jwtDecode } from "jwt-decode";
 
 const API_URL = "http://localhost:8080";
 const KEYCLOAK_TOKEN_URL = "http://localhost:8180/realms/reservation-realm/protocol/openid-connect/token";
-const CLIENT_ID = "admin-cli"; // From application.properties
+const CLIENT_ID = "reservation-frontend"; // keycloak.login-client-id in application.properties
 
 export const authService = {
     login: async (email, password) => {

@@ -9,6 +9,8 @@ import org.reservation.reservationterrain.dto.ClientSignupRequest;
 import org.reservation.reservationterrain.model.Client;
 import org.reservation.reservationterrain.repository.ClientRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
@@ -69,13 +71,25 @@ public class ClientService {
         String email = jwt.getClaimAsString("email");
         Client client = getOrCreateFromJwt(jwt, email);
 
+        // email and numTele are unique: answer with a clear message instead of a 500
+        if (request.getEmail() != null && !request.getEmail().equalsIgnoreCase(client.getEmail())
+                && clientRepository.findByEmail(request.getEmail()).isPresent()) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Email déjà utilisé");
+        }
+        if (request.getNumTele() != null && !request.getNumTele().isBlank()
+                && !request.getNumTele().equals(client.getNumTele())
+                && clientRepository.existsByNumTele(request.getNumTele())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Numéro de téléphone déjà utilisé");
+        }
+
         // Update database
         if (request.getNom() != null)
             client.setNom(request.getNom());
         if (request.getPrenom() != null)
             client.setPrenom(request.getPrenom());
         if (request.getNumTele() != null)
-            client.setNumTele(request.getNumTele());
+            // store "" as null so several clients can leave the (unique) phone empty
+            client.setNumTele(request.getNumTele().isBlank() ? null : request.getNumTele());
         if (request.getEmail() != null)
             client.setEmail(request.getEmail());
 

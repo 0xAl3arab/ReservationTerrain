@@ -48,7 +48,7 @@ public class OwnerService {
         @Value("${keycloak.server-url}")
         private String keycloakServerUrl;
 
-        @Value("${keycloak.client-id:admin-cli}")
+        @Value("${keycloak.login-client-id:reservation-frontend}")
         private String clientId;
 
         public OwnerService(Keycloak keycloak,
@@ -84,6 +84,9 @@ public class OwnerService {
                 UsersResource usersResource = realmResource.users();
 
                 Response response = usersResource.create(user);
+                if (response.getStatus() == 409) {
+                        throw new RuntimeException("Un compte existe déjà avec cet email");
+                }
                 if (response.getStatus() >= 300) {
                         // If user already exists in Keycloak, we might want to handle it gracefully
                         // For now, throw exception
@@ -133,7 +136,7 @@ public class OwnerService {
                                 .build();
         }
 
-        public Terrain addTerrain(String ownerEmail, TerrainDTO terrainDTO) {
+        public TerrainDTO addTerrain(String ownerEmail, TerrainDTO terrainDTO) {
                 Owner owner = ownerRepository.findByEmail(ownerEmail)
                                 .orElseThrow(() -> new RuntimeException("Owner not found"));
 
@@ -167,7 +170,22 @@ public class OwnerService {
                 terrain.setImage(terrainDTO.getImage());
                 terrain.setComplexe(complexe);
 
-                return terrainRepository.save(terrain);
+                return toTerrainDTO(terrainRepository.save(terrain));
+        }
+
+        // Returning the Terrain entity directly makes Jackson loop on
+        // Terrain.complexe -> Complexe.terrains -> Terrain...
+        private TerrainDTO toTerrainDTO(Terrain t) {
+                return TerrainDTO.builder()
+                                .id(t.getId())
+                                .nom(t.getNom())
+                                .prixTerrain(Double.valueOf(t.getPrixTerrain()))
+                                .status(t.getStatus())
+                                .heureOuverture(t.getHeureOuverture())
+                                .heureFermeture(t.getHeureFermeture())
+                                .dureeCreneau(t.getDureeCreneau())
+                                .image(t.getImage())
+                                .build();
         }
 
         public List<TerrainDTO> getMyTerrains(String ownerEmail) {
@@ -179,16 +197,7 @@ public class OwnerService {
                         return java.util.Collections.emptyList();
 
                 return terrainRepository.findByComplexe_Id(complexe.getId()).stream()
-                                .map(t -> TerrainDTO.builder()
-                                                .id(t.getId())
-                                                .nom(t.getNom())
-                                                .prixTerrain(Double.valueOf(t.getPrixTerrain()))
-                                                .status(t.getStatus())
-                                                .heureOuverture(t.getHeureOuverture())
-                                                .heureFermeture(t.getHeureFermeture())
-                                                .dureeCreneau(t.getDureeCreneau())
-                                                .image(t.getImage())
-                                                .build())
+                                .map(this::toTerrainDTO)
                                 .collect(Collectors.toList());
         }
 
@@ -215,6 +224,10 @@ public class OwnerService {
                 if (complexe == null) {
                         complexe = new Complexe();
                         complexe.setOwner(owner);
+                        // nom, ville and adress are NOT NULL columns
+                        complexe.setNom(owner.getNomComplexe() != null ? owner.getNomComplexe() : "Mon Complexe");
+                        complexe.setVille("");
+                        complexe.setAdress("");
                 }
 
                 if (complexeDTO.getNom() != null) {
@@ -308,7 +321,7 @@ public class OwnerService {
                 }
         }
 
-        public Terrain updateTerrain(String ownerEmail, Long terrainId, TerrainDTO terrainDTO) {
+        public TerrainDTO updateTerrain(String ownerEmail, Long terrainId, TerrainDTO terrainDTO) {
                 Owner owner = ownerRepository.findByEmail(ownerEmail)
                                 .orElseThrow(() -> new RuntimeException("Owner not found"));
 
@@ -341,7 +354,7 @@ public class OwnerService {
                 if (terrainDTO.getStatus() != null)
                         terrain.setStatus(terrainDTO.getStatus());
 
-                return terrainRepository.save(terrain);
+                return toTerrainDTO(terrainRepository.save(terrain));
         }
 
         public List<ReservationDTO> getReservations(String email, Long terrainId, LocalDate date) {
@@ -436,10 +449,12 @@ public class OwnerService {
                 revenueReservations.addAll(reservationRepository
                                 .findByTerrain_Complexe_IdAndStatus(complexId, "CONFIRMEE"));
 
+                // prixTerrain is a price per hour, so weight it by the reservation duration
                 double totalRevenue = revenueReservations.stream()
                                 .mapToDouble(res -> {
                                         try {
-                                                return Double.parseDouble(res.getTerrain().getPrixTerrain());
+                                                return Double.parseDouble(res.getTerrain().getPrixTerrain())
+                                                                * res.getDuree() / 60.0;
                                         } catch (NumberFormatException e) {
                                                 return 0.0;
                                         }

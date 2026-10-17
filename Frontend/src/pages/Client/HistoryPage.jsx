@@ -80,6 +80,7 @@ const HistoryPage = () => {
     const getStatusColor = (status) => {
         switch (status) {
             case 'CONFIRMEE':
+            case 'VALIDEE':
                 return 'bg-green-100 text-green-800';
             case 'EN_ATTENTE':
                 return 'bg-yellow-100 text-yellow-800';
@@ -94,6 +95,8 @@ const HistoryPage = () => {
         switch (status) {
             case 'CONFIRMEE':
                 return 'Confirmée';
+            case 'VALIDEE':
+                return 'Validée';
             case 'EN_ATTENTE':
                 return 'En attente';
             case 'ANNULEE':
@@ -102,6 +105,10 @@ const HistoryPage = () => {
                 return status;
         }
     };
+
+    // reservation.price is the terrain's hourly price, duree is in minutes
+    const totalPrice = (reservation) =>
+        Math.round(parseFloat(reservation.price) * reservation.duree / 60 * 100) / 100;
 
     const filteredReservations = dateFilter
         ? reservations.filter(res => res.date === dateFilter)
@@ -212,7 +219,7 @@ const HistoryPage = () => {
                                                 <div className="text-sm text-gray-500">{reservation.complexNom}</div>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">
-                                                <div className="text-sm font-bold text-gray-900">{reservation.price} MAD</div>
+                                                <div className="text-sm font-bold text-gray-900">{totalPrice(reservation)} MAD</div>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(reservation.status)}`}>

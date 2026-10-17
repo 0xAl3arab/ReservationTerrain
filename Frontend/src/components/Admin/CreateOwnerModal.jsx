@@ -32,7 +32,11 @@ const CreateOwnerModal = ({ isOpen, onClose, onSuccess }) => {
             });
 
             if (!response.ok) {
-                const data = await response.json();
+                // 401/403 come back with an empty body
+                const data = await response.json().catch(() => ({}));
+                if (response.status === 401 || response.status === 403) {
+                    throw new Error("Accès refusé : reconnectez-vous en tant qu'administrateur.");
+                }
                 throw new Error(data.message || 'Failed to create owner');
             }
 

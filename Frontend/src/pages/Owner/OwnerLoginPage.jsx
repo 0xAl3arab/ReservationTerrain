@@ -41,6 +41,7 @@ function OwnerLoginPage() {
 
             const data = await res.json();
             localStorage.setItem("owner_token", data.access_token);
+            localStorage.setItem("owner_refresh_token", data.refresh_token);
 
             setTimeout(() => {
                 navigate("/owner/dashboard");

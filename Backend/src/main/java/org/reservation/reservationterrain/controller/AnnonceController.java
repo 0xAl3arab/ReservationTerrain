@@ -4,6 +4,8 @@ import org.reservation.reservationterrain.dto.AnnonceDTO;
 import org.reservation.reservationterrain.service.AnnonceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,8 +19,8 @@ public class AnnonceController {
     private AnnonceService annonceService;
 
     @PostMapping
-    public ResponseEntity<AnnonceDTO> createAnnonce(@RequestBody AnnonceDTO dto) {
-        return ResponseEntity.ok(annonceService.createAnnonce(dto));
+    public ResponseEntity<AnnonceDTO> createAnnonce(@RequestBody AnnonceDTO dto, @AuthenticationPrincipal Jwt jwt) {
+        return ResponseEntity.ok(annonceService.createAnnonce(dto, jwt));
     }
 
     @GetMapping

@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { reservationService } from '../services/reservationService';
+import { toLocalISODate } from '../utils/date';
 
 const ReservationModal = ({ isOpen, onClose, terrain, complex, selectedDate, selectedTime, onSuccess }) => {
     const navigate = useNavigate();
-    const [date, setDate] = useState(selectedDate || new Date().toISOString().split('T')[0]);
+    const [date, setDate] = useState(selectedDate || toLocalISODate());
     const [heureDebut, setHeureDebut] = useState('');
     const [heureFin, setHeureFin] = useState('');
     const [loading, setLoading] = useState(false);
@@ -123,7 +124,7 @@ const ReservationModal = ({ isOpen, onClose, terrain, complex, selectedDate, sel
         const options = [];
         const now = new Date();
         const currentHour = now.getHours();
-        const isToday = new Date(date).toDateString() === now.toDateString();
+        const isToday = date === toLocalISODate(now);
 
         for (let i = terrain.heureOuverture; i < terrain.heureFermeture; i++) {
             // If it's today, skip hours that have passed or are the current hour
@@ -187,7 +188,7 @@ const ReservationModal = ({ isOpen, onClose, terrain, complex, selectedDate, sel
                                 type="date"
                                 value={date}
                                 onChange={(e) => setDate(e.target.value)}
-                                min={new Date().toISOString().split('T')[0]}
+                                min={toLocalISODate()}
                                 required
                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0B2CFF] focus:border-transparent"
                             />

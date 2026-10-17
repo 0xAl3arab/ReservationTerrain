@@ -24,7 +24,7 @@ public class PasswordChangeService {
     @Value("${keycloak.server-url}")
     private String keycloakServerUrl;
 
-    @Value("${keycloak.client-id:admin-cli}")
+    @Value("${keycloak.login-client-id:reservation-frontend}")
     private String clientId;
 
     public PasswordChangeService(Keycloak keycloak,

@@ -5,7 +5,8 @@ import Footer from '../../components/Footer';
 import TerrainCard from '../../components/TerrainCard';
 import ReservationModal from '../../components/ReservationModal';
 import { complexeService } from '../../services/complexeService';
-import { reservationService } from '../../services/reservationService';
+import { toLocalISODate } from '../../utils/date';
+import { jwtDecode } from 'jwt-decode';
 
 const TerrainDetailsPage = () => {
     const { id } = useParams();
@@ -15,7 +16,7 @@ const TerrainDetailsPage = () => {
     const [terrains, setTerrains] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
-    const [selectedDate] = useState(new Date().toISOString().split('T')[0]);
+    const [selectedDate] = useState(toLocalISODate());
     const [terrainAvailability, setTerrainAvailability] = useState({});
     const [user, setUser] = useState(null);
 
@@ -39,7 +40,7 @@ const TerrainDetailsPage = () => {
         if (token) {
             try {
                 // Decode token to get user info
-                const payload = JSON.parse(atob(token.split('.')[1]));
+                const payload = jwtDecode(token);
                 setUser({
                     firstName: payload.given_name || 'User',
                     lastName: payload.family_name || '',

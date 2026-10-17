@@ -2,6 +2,7 @@ package org.reservation.reservationterrain.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -27,9 +28,14 @@ public class SecurityConfig {
                         // ==========================================
                         // 1. ENDPOINTS PUBLICS (Accessibles à tous)
                         // ==========================================
-                        .requestMatchers("/api/complexes/**").permitAll()
-                        .requestMatchers("/auth/client/**").permitAll()
-                        .requestMatchers("/annonces/**").permitAll() // Allow public access to announcements
+                        // Lecture publique uniquement : la création / modification / suppression
+                        // de complexes et d'annonces exige un utilisateur connecté.
+                        // Page d'erreur Spring : sinon toute exception d'un endpoint public
+                        // arrive au navigateur comme un 401 vide au lieu du vrai statut.
+                        .requestMatchers("/error").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/complexes/**").permitAll()
+                        .requestMatchers("/auth/client/signup", "/auth/client/login").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/annonces/**").permitAll()
                         .requestMatchers("/admin/login").permitAll()
                         // Optionnel : si tu as un endpoint de login spécifique pour owner
                         // .requestMatchers("/auth/owner/login").permitAll()
@@ -39,14 +45,25 @@ public class SecurityConfig {
                         // ==========================================
                         // 2. TA PARTIE : ESPACE OWNER
                         // ==========================================
-                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/owners").authenticated()
-                        .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/owners/create").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/owners").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/owners/create").hasRole("ADMIN")
                         .requestMatchers("/api/owners/**").hasAnyRole("OWNER", "ADMIN")
 
                         // ==========================================
                         // 3. ESPACE ADMIN
                         // ==========================================
                         .requestMatchers("/admin/**").hasRole("ADMIN")
+                        // Gestion des complexes (la lecture GET reste publique, voir plus haut)
+                        .requestMatchers(HttpMethod.POST, "/api/complexes/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/complexes/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/complexes/**").hasRole("ADMIN")
+                        // Gestion globale des réservations. Les clients gardent
+                        // POST /api/reservations, POST /api/reservations/{id}/cancel
+                        // et GET /api/my-reservations (règle "authenticated" ci-dessous).
+                        .requestMatchers(HttpMethod.GET, "/api/reservations/filter", "/api/reservations/count",
+                                "/api/reservations/week", "/api/reservations/week/count").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/reservations/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/reservations/**").hasRole("ADMIN")
 
                         // ==========================================
                         // 4. AUTRES (Requiert authentification)

@@ -9,6 +9,6 @@ import java.util.List;
 
 @Repository
 public interface AnnonceRepository extends JpaRepository<Annonce, Integer> {
-    List<Annonce> findByTerrain_Complexe_Ville(String ville);
+    List<Annonce> findByTerrain_Complexe_VilleContainingIgnoreCase(String ville);
     List<Annonce> findByTerrain(Terrain terrain);
 }

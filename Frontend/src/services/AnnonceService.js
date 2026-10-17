@@ -11,10 +11,8 @@ const AnnonceService = {
         if (city) params.append("city", city);
         if (terrainId) params.append("terrainId", terrainId);
 
-        const response = await fetch(`${API_URL}?${params.toString()}`, {
-            method: "GET",
-            headers: getAuthHeaders(),
-        });
+        // Public endpoint: no token, an expired one would make the backend answer 401
+        const response = await fetch(`${API_URL}?${params.toString()}`);
         if (!response.ok) throw new Error("Failed to fetch annonces");
         return response.json();
     },

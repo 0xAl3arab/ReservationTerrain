@@ -8,6 +8,7 @@ import org.reservation.reservationterrain.repository.AnnonceRepository;
 import org.reservation.reservationterrain.repository.ClientRepository;
 import org.reservation.reservationterrain.repository.TerrainRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -26,8 +27,11 @@ public class AnnonceService {
     @Autowired
     private TerrainRepository terrainRepository;
 
-    public AnnonceDTO createAnnonce(AnnonceDTO dto) {
-        Client client = clientRepository.findById(dto.getClientId())
+    // The author is taken from the token, never from the request body,
+    // otherwise anyone could post an annonce in another client's name.
+    public AnnonceDTO createAnnonce(AnnonceDTO dto, Jwt jwt) {
+        Client client = clientRepository.findByKeycloakId(jwt.getSubject())
+                .or(() -> clientRepository.findByEmail(jwt.getClaimAsString("email")))
                 .orElseThrow(() -> new RuntimeException("Client not found"));
 
         Terrain terrain = terrainRepository.findById(dto.getTerrainId())
@@ -50,7 +54,7 @@ public class AnnonceService {
     }
 
     public List<AnnonceDTO> getAnnoncesByCity(String city) {
-        return annonceRepository.findByTerrain_Complexe_Ville(city).stream()
+        return annonceRepository.findByTerrain_Complexe_VilleContainingIgnoreCase(city.trim()).stream()
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());
     }

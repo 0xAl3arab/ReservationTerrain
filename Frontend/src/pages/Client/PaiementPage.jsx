@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import { reservationService } from '../../services/reservationService';
+import { jwtDecode } from 'jwt-decode';
 
 const PaiementPage = () => {
     const navigate = useNavigate();
@@ -28,7 +29,7 @@ const PaiementPage = () => {
         const token = localStorage.getItem('kc_access_token');
         if (token) {
             try {
-                const payload = JSON.parse(atob(token.split('.')[1]));
+                const payload = jwtDecode(token);
                 setUser({
                     firstName: payload.given_name || 'User',
                     lastName: payload.family_name || '',

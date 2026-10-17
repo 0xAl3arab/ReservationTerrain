@@ -37,8 +37,10 @@ function OwnerProfilePage() {
             await ownerService.updateProfile(form);
             setProfile({ ...profile, ...form });
             setIsEditing(false);
+            message.success("Profil mis à jour");
         } catch (err) {
-            console.error("Update failed");
+            console.error("Update failed", err);
+            message.error("La mise à jour du profil a échoué (numéro peut-être déjà utilisé)");
         }
     };
 

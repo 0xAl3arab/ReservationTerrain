@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import AdminNavbar from "../../components/Admin/AdminNavbar";
 import { authService } from "../../services/authService";
+import { toLocalISODate } from "../../utils/date";
 
 function AdminDashboard() {
     const navigate = useNavigate();
@@ -26,7 +27,7 @@ function AdminDashboard() {
             const monday = new Date(today.setDate(diff));
             const sunday = new Date(today.setDate(monday.getDate() + 6));
 
-            const formatDate = (date) => date.toISOString().split('T')[0];
+            const formatDate = toLocalISODate;
 
             const [countRes, activeTerrainsRes, totalResRes, weeklyResCountRes] = await Promise.all([
                 authService.fetchAuth("http://localhost:8080/api/complexes/count"),

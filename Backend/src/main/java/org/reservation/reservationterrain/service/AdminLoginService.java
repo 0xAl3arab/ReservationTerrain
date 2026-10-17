@@ -7,7 +7,9 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class AdminLoginService {
@@ -18,7 +20,7 @@ public class AdminLoginService {
     @Value("${keycloak.realm}")
     private String realm;
 
-    @Value("${keycloak.client-id:admin-cli}")
+    @Value("${keycloak.login-client-id:reservation-frontend}")
     private String clientId;
 
     private final RestTemplate restTemplate = new RestTemplate();
@@ -44,6 +46,8 @@ public class AdminLoginService {
                     entity,
                     TokenResponse.class);
             return response.getBody();
+        } catch (HttpClientErrorException e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Email ou mot de passe incorrect");
         } catch (Exception e) {
             throw new RuntimeException("Échec de l'authentification admin: " + e.getMessage());
         }

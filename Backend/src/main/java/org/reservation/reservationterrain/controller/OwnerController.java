@@ -1,10 +1,9 @@
 package org.reservation.reservationterrain.controller;
 
 import org.reservation.reservationterrain.model.Owner;
-import org.reservation.reservationterrain.repository.OwnerRepository;
 import org.reservation.reservationterrain.service.OwnerService;
 import org.reservation.reservationterrain.dto.*;
-import org.reservation.reservationterrain.model.Terrain;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -43,8 +42,6 @@ public class OwnerController {
             @RequestBody PasswordChangeRequest request) {
         try {
             String email = jwt.getClaimAsString("email");
-            System.out.println("DEBUG: change-password request for: " + email);
-            System.out.println("DEBUG: JWT Claims: " + jwt.getClaims());
             ownerService.changePassword(email, request);
             return ResponseEntity.ok("Mot de passe mis à jour avec succès");
         } catch (Exception e) {
@@ -67,7 +64,7 @@ public class OwnerController {
 
     // --- TERRAINS ---
     @PostMapping("/terrains")
-    public ResponseEntity<Terrain> addTerrain(@RequestBody TerrainDTO terrainDTO, @AuthenticationPrincipal Jwt jwt) {
+    public ResponseEntity<TerrainDTO> addTerrain(@RequestBody TerrainDTO terrainDTO, @AuthenticationPrincipal Jwt jwt) {
         String email = jwt.getClaimAsString("email");
         return ResponseEntity.ok(ownerService.addTerrain(email, terrainDTO));
     }
@@ -79,7 +76,7 @@ public class OwnerController {
     }
 
     @PutMapping("/terrains/{id}")
-    public ResponseEntity<Terrain> updateTerrain(@AuthenticationPrincipal Jwt jwt, @PathVariable Long id,
+    public ResponseEntity<TerrainDTO> updateTerrain(@AuthenticationPrincipal Jwt jwt, @PathVariable Long id,
             @RequestBody TerrainDTO terrainDTO) {
         String email = jwt.getClaimAsString("email");
         return ResponseEntity.ok(ownerService.updateTerrain(email, id, terrainDTO));
@@ -90,7 +87,7 @@ public class OwnerController {
     public ResponseEntity<List<ReservationDTO>> getReservations(
             @AuthenticationPrincipal Jwt jwt,
             @RequestParam(required = false) Long terrainId,
-            @RequestParam(required = false) LocalDate date) {
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         String email = jwt.getClaimAsString("email");
         return ResponseEntity.ok(ownerService.getReservations(email, terrainId, date));
     }
@@ -116,12 +113,12 @@ public class OwnerController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Owner> createOwner(@RequestBody OwnerRegistrationDTO request) {
+    public ResponseEntity<?> createOwner(@RequestBody OwnerRegistrationDTO request) {
         try {
             Owner owner = ownerService.createOwner(request);
             return ResponseEntity.ok(owner);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(null);
+            return ResponseEntity.badRequest().body(java.util.Map.of("message", String.valueOf(e.getMessage())));
         }
     }
 

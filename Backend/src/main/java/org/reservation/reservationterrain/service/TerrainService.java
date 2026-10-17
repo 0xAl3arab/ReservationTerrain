@@ -30,6 +30,7 @@ public class TerrainService {
             dto.setStatus(t.getStatus());
             dto.setHeureOuverture(t.getHeureOuverture());
             dto.setHeureFermeture(t.getHeureFermeture());
+            dto.setDureeCreneau(t.getDureeCreneau());
 
             terrainDtos.add(dto);
         }

@@ -35,7 +35,13 @@ function ClientSignupPage() {
 
             if (!res.ok) {
                 const errorText = await res.text();
-                throw new Error(`Erreur ${res.status}: ${errorText}`);
+                let message = errorText;
+                try {
+                    message = JSON.parse(errorText).message || errorText;
+                } catch {
+                    // plain-text body, keep it as is
+                }
+                throw new Error(message || `Erreur ${res.status}`);
             }
 
             const data = await res.json();

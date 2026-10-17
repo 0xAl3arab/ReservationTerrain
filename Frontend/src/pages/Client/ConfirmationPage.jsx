@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
+import { jwtDecode } from 'jwt-decode';
 
 const ConfirmationPage = () => {
     const navigate = useNavigate();
@@ -23,7 +24,7 @@ const ConfirmationPage = () => {
         const token = localStorage.getItem('kc_access_token');
         if (token) {
             try {
-                const payload = JSON.parse(atob(token.split('.')[1]));
+                const payload = jwtDecode(token);
                 setUser({
                     firstName: payload.given_name || 'User',
                     lastName: payload.family_name || '',

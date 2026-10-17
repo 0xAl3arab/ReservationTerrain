@@ -9,7 +9,9 @@ import org.keycloak.representations.idm.UserRepresentation;
 import org.reservation.reservationterrain.dto.ClientSignupRequest;
 import org.reservation.reservationterrain.model.Client;
 import org.reservation.reservationterrain.repository.ClientRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -30,6 +32,16 @@ public class ClientSignupService {
 
     public Client signup(ClientSignupRequest request) {
 
+        // 0. Vérifier les doublons en base AVANT de créer le user Keycloak,
+        // sinon on laisse un compte Keycloak orphelin quand l'insert échoue.
+        if (clientRepository.findByEmail(request.getEmail()).isPresent()) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Un compte existe déjà avec cet email");
+        }
+        if (request.getNumTele() != null && !request.getNumTele().isBlank()
+                && clientRepository.existsByNumTele(request.getNumTele())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Ce numéro de téléphone est déjà utilisé");
+        }
+
         // 1. Créer user Keycloak
         UserRepresentation user = new UserRepresentation();
         user.setUsername(request.getEmail());
@@ -47,7 +59,18 @@ public class ClientSignupService {
         RealmResource realmResource = keycloak.realm(realm);
         UsersResource usersResource = realmResource.users();
 
-        Response response = usersResource.create(user);
+        Response response;
+        try {
+            response = usersResource.create(user);
+        } catch (Exception e) {
+            // Le backend n'arrive pas à se connecter à l'API admin de Keycloak
+            // (identifiants keycloak.username/password ou client admin-cli du realm master)
+            throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,
+                    "Service d'inscription indisponible (connexion à Keycloak impossible)", e);
+        }
+        if (response.getStatus() == 409) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Un compte existe déjà avec cet email");
+        }
         if (response.getStatus() >= 300) {
             throw new RuntimeException("Erreur création user Keycloak: " + response.getStatus());
         }
@@ -72,6 +95,16 @@ public class ClientSignupService {
         client.setNumTele(request.getNumTele());
         client.setRole("CLIENT");
 
-        return clientRepository.save(client);
+        try {
+            return clientRepository.save(client);
+        } catch (RuntimeException e) {
+            // Annule la création Keycloak pour que l'utilisateur puisse réessayer
+            try {
+                usersResource.get(keycloakId).remove();
+            } catch (Exception cleanup) {
+                System.err.println("Could not remove Keycloak user " + keycloakId + ": " + cleanup.getMessage());
+            }
+            throw e;
+        }
     }
 }

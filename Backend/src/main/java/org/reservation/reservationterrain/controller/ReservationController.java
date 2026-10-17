@@ -30,9 +30,6 @@ public class ReservationController {
             @AuthenticationPrincipal Jwt jwt) {
         try {
             // Extract Keycloak ID from JWT token
-            System.out.println("DEBUG JWT Claims: " + jwt.getClaims());
-            System.out.println("DEBUG JWT Subject: " + jwt.getSubject());
-
             String keycloakId = jwt.getSubject();
             String email = jwt.getClaimAsString("email");
             String nom = jwt.getClaimAsString("family_name");
@@ -122,13 +119,14 @@ public class ReservationController {
     public ResponseEntity<List<ReservationResponse>> getReservationsWithFilters(
             @RequestParam(required = false) Long complexId,
             @RequestParam(required = false) Long clientId,
+            @RequestParam(required = false) String clientQuery,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateFrom,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateTo,
             @RequestParam(required = false) String status,
             @RequestParam(required = false) Integer minDuration,
             @RequestParam(required = false) Integer maxDuration) {
         return ResponseEntity.ok(reservationService.getReservationsWithFilters(
-                complexId, clientId, dateFrom, dateTo,
+                complexId, clientId, clientQuery, dateFrom, dateTo,
                 status,
                 minDuration, maxDuration));
     }

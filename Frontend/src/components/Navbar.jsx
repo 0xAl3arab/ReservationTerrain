@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 
 const Navbar = ({ user: propUser, onLogout: propLogout }) => {
     const navigate = useNavigate();
@@ -18,7 +19,7 @@ const Navbar = ({ user: propUser, onLogout: propLogout }) => {
             if (token) {
                 // 1. Immediate UI update from Token
                 try {
-                    const payload = JSON.parse(atob(token.split('.')[1]));
+                    const payload = jwtDecode(token);
                     setInternalUser({
                         firstName: payload.given_name || "User",
                         lastName: payload.family_name || "",

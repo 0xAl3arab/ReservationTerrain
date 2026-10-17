@@ -43,7 +43,7 @@ function OwnerReservationsPage() {
         if (window.confirm("Voulez-vous vraiment annuler cette réservation et libérer le terrain ?")) {
             try {
                 await ownerService.cancelReservation(id);
-                const updatedRes = await ownerService.getReservations();
+                const updatedRes = await ownerService.getReservations(filters.terrainId, filters.date);
                 setReservations(updatedRes);
             } catch (err) {
                 alert("Erreur lors de l'annulation");

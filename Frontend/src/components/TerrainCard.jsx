@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import defaultPhoto from '../assets/terrain.jpeg';
+import defaultPhoto from '../assets/Terrain.jpeg';
 
 const TerrainCard = ({ terrain, selectedDate, selectedTime, availability, onReserve }) => {
     // availability can be: 'available', 'unavailable', 'closed'

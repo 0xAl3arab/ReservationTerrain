@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { jwtDecode } from "jwt-decode";
 import Navbar from "../../components/Navbar";
 import Hero from "../../components/Hero";
 import ComplexCard from "../../components/ComplexCard";
@@ -24,7 +25,7 @@ const ComplexeListPage = () => {
         if (token) {
             // 1. Immediate UI update from Token (Restores previous working behavior)
             try {
-                const payload = JSON.parse(atob(token.split('.')[1]));
+                const payload = jwtDecode(token);
                 setUser({
                     firstName: payload.given_name || "User",
                     lastName: payload.family_name || "",
@@ -91,20 +92,15 @@ const ComplexeListPage = () => {
                 setActiveTerrainsCount(count);
             }
 
-            // Stabilize mock data here
+            // Real values only: a complex without terrains has no price (null)
             const enrichedData = data.map(c => {
-                const hasTerrains = c.terrains && c.terrains.length > 0;
+                const prices = (c.terrains || [])
+                    .map(t => parseFloat(t.prixTerrain))
+                    .filter(p => !isNaN(p));
                 return {
                     ...c,
-                    // Use real data if available, otherwise use stable mock data
-                    // We generate mock data based on ID to be deterministic if we wanted, 
-                    // but since we save it in state, random here is fine as it runs once per fetch.
-                    displayMinPrice: hasTerrains
-                        ? Math.min(...c.terrains.map(t => parseInt(t.prixTerrain) || 9999))
-                        : (Math.floor(Math.random() * 3) + 3) * 50,
-                    displayTerrainCount: hasTerrains
-                        ? c.terrains.length
-                        : Math.floor(Math.random() * 4) + 2
+                    displayMinPrice: prices.length > 0 ? Math.min(...prices) : null,
+                    displayTerrainCount: c.terrains ? c.terrains.length : 0
                 };
             });
 
@@ -135,11 +131,11 @@ const ComplexeListPage = () => {
         }
 
         if (filters.minPrice) {
-            result = result.filter(c => c.displayMinPrice >= parseInt(filters.minPrice));
+            result = result.filter(c => c.displayMinPrice !== null && c.displayMinPrice >= parseInt(filters.minPrice));
         }
 
         if (filters.maxPrice) {
-            result = result.filter(c => c.displayMinPrice <= parseInt(filters.maxPrice));
+            result = result.filter(c => c.displayMinPrice !== null && c.displayMinPrice <= parseInt(filters.maxPrice));
         }
 
         setFilteredComplexes(result);

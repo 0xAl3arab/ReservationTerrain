@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -39,11 +40,21 @@ public class ReservationService {
         @Transactional
         public ReservationResponse createReservation(ReservationRequest request, String keycloakId, String email,
                         String nom, String prenom) {
+                if (request.getTerrainId() == null || request.getDate() == null
+                                || request.getHeureDebut() == null || request.getHeureFin() == null) {
+                        throw new IllegalArgumentException("Terrain, date, heure de début et heure de fin sont obligatoires");
+                }
+
                 // 1. Validate terrain exists
                 Terrain terrain = terrainRepository.findById(request.getTerrainId())
                                 .orElseThrow(
                                                 () -> new IllegalArgumentException("Terrain non trouvé avec l'ID: "
                                                                 + request.getTerrainId()));
+
+                // The UI hides closed terrains, but the API must refuse them too
+                if (!"OUVERT".equalsIgnoreCase(terrain.getStatus())) {
+                        throw new IllegalStateException("Ce terrain n'est pas ouvert à la réservation");
+                }
 
                 // 2. Validate client exists or create if missing (Lazy Creation)
                 final String finalKeycloakId;
@@ -90,21 +101,12 @@ public class ReservationService {
                         throw new IllegalArgumentException("L'heure de début doit être avant l'heure de fin");
                 }
 
+                if (LocalDateTime.of(request.getDate(), request.getHeureDebut()).isBefore(LocalDateTime.now())) {
+                        throw new IllegalArgumentException("Impossible de réserver un créneau dans le passé");
+                }
+
                 // 4. Validate time is within terrain opening hours
-                int heureDebutInt = request.getHeureDebut().getHour();
-                int heureFinInt = request.getHeureFin().getHour();
-
-                if (heureDebutInt < terrain.getHeureOuverture()) {
-                        throw new IllegalArgumentException(
-                                        String.format("L'heure de début (%02d:00) est avant l'heure d'ouverture du terrain (%02d:00)",
-                                                        heureDebutInt, terrain.getHeureOuverture()));
-                }
-
-                if (heureFinInt > terrain.getHeureFermeture()) {
-                        throw new IllegalArgumentException(
-                                        String.format("L'heure de fin (%02d:00) est après l'heure de fermeture du terrain (%02d:00)",
-                                                        heureFinInt, terrain.getHeureFermeture()));
-                }
+                validateOpeningHours(terrain, request.getHeureDebut(), request.getHeureFin());
 
                 // 5. Check for overlapping reservations
                 List<Reservation> overlapping = reservationRepository.findOverlappingReservations(
@@ -138,10 +140,18 @@ public class ReservationService {
                 return toResponse(saved);
         }
 
+        // Public endpoint used to display availability: skip cancelled reservations
+        // (they no longer block the slot) and do not expose client details.
         public List<ReservationResponse> getReservationsByTerrain(Long terrainId, LocalDate date) {
                 List<Reservation> reservations = reservationRepository.findByTerrainIdAndDate(terrainId, date);
                 return reservations.stream()
+                                .filter(r -> !"ANNULEE".equals(r.getStatus()))
                                 .map(this::toResponse)
+                                .peek(r -> {
+                                        r.setClientId(null);
+                                        r.setClientNom(null);
+                                        r.setClientEmail(null);
+                                })
                                 .collect(Collectors.toList());
         }
 
@@ -160,14 +170,19 @@ public class ReservationService {
         }
 
         public List<ReservationResponse> getReservationsWithFilters(
-                        Long complexId, Long clientId, LocalDate dateFrom, LocalDate dateTo,
+                        Long complexId, Long clientId, String clientQuery, LocalDate dateFrom, LocalDate dateTo,
                         String status,
                         Integer minDuration, Integer maxDuration) {
+                String query = clientQuery == null ? "" : clientQuery.trim().toLowerCase();
                 return reservationRepository.findReservationsByFilters(
                                 complexId, null, clientId, dateFrom, dateTo,
                                 status,
                                 minDuration, maxDuration).stream()
                                 .map(this::toResponse)
+                                // free-text search on the client's name or email (admin search box)
+                                .filter(r -> query.isEmpty()
+                                                || (r.getClientNom() + " " + r.getClientEmail()).toLowerCase()
+                                                                .contains(query))
                                 .collect(Collectors.toList());
         }
 
@@ -191,20 +206,7 @@ public class ReservationService {
 
                 // 3. Validate time is within terrain opening hours
                 Terrain terrain = reservation.getTerrain();
-                int heureDebutInt = request.getHeureDebut().getHour();
-                int heureFinInt = request.getHeureFin().getHour();
-
-                if (heureDebutInt < terrain.getHeureOuverture()) {
-                        throw new IllegalArgumentException(
-                                        String.format("L'heure de début (%02d:00) est avant l'heure d'ouverture du terrain (%02d:00)",
-                                                        heureDebutInt, terrain.getHeureOuverture()));
-                }
-
-                if (heureFinInt > terrain.getHeureFermeture()) {
-                        throw new IllegalArgumentException(
-                                        String.format("L'heure de fin (%02d:00) est après l'heure de fermeture du terrain (%02d:00)",
-                                                        heureFinInt, terrain.getHeureFermeture()));
-                }
+                validateOpeningHours(terrain, request.getHeureDebut(), request.getHeureFin());
 
                 // 4. Check for overlapping reservations (excluding current one)
                 List<Reservation> overlapping = reservationRepository.findOverlappingReservationsExcludingId(
@@ -246,6 +248,21 @@ public class ReservationService {
         @Transactional
         public void deleteReservations(List<Long> ids) {
                 reservationRepository.deleteAllById(ids);
+        }
+
+        // Compare in seconds so that e.g. 22:30 is rejected when the terrain closes at 22
+        private void validateOpeningHours(Terrain terrain, LocalTime debut, LocalTime fin) {
+                if (debut.toSecondOfDay() < terrain.getHeureOuverture() * 3600) {
+                        throw new IllegalArgumentException(
+                                        String.format("L'heure de début (%s) est avant l'heure d'ouverture du terrain (%02d:00)",
+                                                        debut, terrain.getHeureOuverture()));
+                }
+
+                if (fin.toSecondOfDay() > terrain.getHeureFermeture() * 3600) {
+                        throw new IllegalArgumentException(
+                                        String.format("L'heure de fin (%s) est après l'heure de fermeture du terrain (%02d:00)",
+                                                        fin, terrain.getHeureFermeture()));
+                }
         }
 
         private ReservationResponse toResponse(Reservation reservation) {
